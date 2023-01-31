@@ -9522,6 +9522,7 @@ GameObject:
   - component: {fileID: 753343459554396757}
   - component: {fileID: 753343459554396756}
   - component: {fileID: 803129006572301963}
+  - component: {fileID: 2896650267881539741}
   m_Layer: 0
   m_Name: RedUsurper
   m_TagString: Enemy
@@ -9810,6 +9811,21 @@ MonoBehaviour:
   - {fileID: 753343459449300708}
   _isFlightless: 0
   _damage: 0
+--- !u!114 &2896650267881539741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 753343460930500148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf3cc6892cf3664b980c3658fd2fdf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fireflame: {fileID: 198637950067575458, guid: 007c57e2df8e9b144b99f471b84f3d56,
+    type: 3}
+  _fireflamePos: {fileID: 753343460368878705}
 --- !u!1 &753343460930500156
 GameObject:
   m_ObjectHideFlags: 0

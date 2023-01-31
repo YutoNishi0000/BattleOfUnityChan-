@@ -9452,6 +9452,9 @@ MonoBehaviour:
   _cols: []
   _HPBar: {fileID: 6060532407089783470}
   _BulkHPBar: {fileID: 4765669735932325320}
+  _earthExplosion: {fileID: 198345217066185332, guid: 32c9fd11a72259d45aa26ae41c34c5aa,
+    type: 3}
+  _effectPos: {fileID: 2600691037702074912}
   ENEMY_HP: 1000
 --- !u!195 &1383902276512918496
 NavMeshAgent:

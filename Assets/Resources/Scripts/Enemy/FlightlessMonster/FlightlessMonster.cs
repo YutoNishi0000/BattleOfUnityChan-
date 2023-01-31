@@ -31,6 +31,8 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     private float MATERIAL_ALPHA = 1;
     public Slider _HPBar;
     public Slider _BulkHPBar;
+    public ParticleSystem _earthExplosion;
+    public Transform _effectPos;
 
     [SerializeField] private int ENEMY_HP = 5000;
 
@@ -253,6 +255,12 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     public void EndHit()
     {
         //GameObject.Destroy(gameObject.GetComponent<Animator>());
+    }
+
+    //アニメーションイベント内でエフェクトをオンにする為の関数
+    public void OnParticleSystem()
+    {
+        CreateParticleSystem(_earthExplosion, _effectPos, transform.rotation, 3);
     }
 
     #endregion

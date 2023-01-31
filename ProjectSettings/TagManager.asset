@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Shootable
+  - Enemy
+  - AttackCollider
+  - Ground
+  - Sword
+  - Ball
   layers:
   - Default
   - TransparentFX

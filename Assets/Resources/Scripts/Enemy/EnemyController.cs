@@ -24,6 +24,30 @@ public class EnemyController : Actor
     public virtual void GetHit() { }
 
     public virtual void Death() { }
+
+    /// <summary>
+    /// パーティクルシステムを生成するための関数
+    /// </summary>
+    /// <param name="particle">生成したいパーティクルシステム</param>
+    /// <param name="pos">生成したい場所</param>
+    /// <param name="rot">指定したい回転</param>
+    /// <param name="destroyTime">何秒後にこのパーティクルシステムを消すか</param>
+    public void CreateParticleSystem(ParticleSystem particle, Transform pos, Quaternion rot, float destroyTime)
+    {
+        ParticleSystem particleSystem = Instantiate(particle);
+
+        //エフェクト生成位置をセット
+        particleSystem.transform.position = pos.position;
+
+        //回転を自身に合わせる
+        particleSystem.transform.rotation = rot;
+
+        //エフェクト再生
+        particleSystem.Play();
+
+        //3秒後に消す
+        Destroy(particleSystem, destroyTime);
+    }
 }
 
 //ダメージ処理用インターフェイス

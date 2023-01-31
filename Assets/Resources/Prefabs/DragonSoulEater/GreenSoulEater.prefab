@@ -4915,6 +4915,7 @@ GameObject:
   - component: {fileID: 2987330660016988517}
   - component: {fileID: 2987330660016988515}
   - component: {fileID: 7367910734567092079}
+  - component: {fileID: 7541499185966895965}
   m_Layer: 0
   m_Name: GreenSoulEater
   m_TagString: Enemy
@@ -5220,6 +5221,20 @@ MonoBehaviour:
   - {fileID: 2987330659555027102}
   _isFlightless: 0
   _damage: 0
+--- !u!114 &7541499185966895965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2987330659199424614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e247f6fd0d77494b908f422c8731869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fireBall: {fileID: 1947871717301538, guid: a990e3ac1318b834488c784d851f42a9, type: 3}
+  _fireballPos: {fileID: 6916534038049058067}
 --- !u!1 &2987330659199426794
 GameObject:
   m_ObjectHideFlags: 0

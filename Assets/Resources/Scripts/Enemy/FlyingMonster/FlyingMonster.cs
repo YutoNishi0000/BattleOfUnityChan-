@@ -328,6 +328,11 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
         _landing = true;
     }
 
+    public void OnParticleSystem()
+    {
+        
+    }
+
     #endregion
 }
 

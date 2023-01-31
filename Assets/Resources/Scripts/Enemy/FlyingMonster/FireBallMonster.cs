@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,6 @@ public class FireBallMonster : EnemyController
     {
         GameObject fireBall = Instantiate(_fireBall, _fireballPos.position, Quaternion.identity);
 
-        fireBall.GetComponent<Rigidbody>().AddForce(transform.forward * 500);
+        fireBall.GetComponent<Rigidbody>().AddForce(new Vector3(transform.forward.x, -1, transform.forward.z) * 500);
     }
 }

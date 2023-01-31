@@ -34,10 +34,8 @@ public class EnemyController : Actor
     /// <param name="destroyTime">何秒後にこのパーティクルシステムを消すか</param>
     public void CreateParticleSystem(ParticleSystem particle, Transform pos, Quaternion rot, float destroyTime)
     {
-        ParticleSystem particleSystem = Instantiate(particle);
-
-        //エフェクト生成位置をセット
-        particleSystem.transform.position = pos.position;
+        //パーティクルシステム作成＆指定した場所の子オブジェクトにパーティクルシステムを設置
+        ParticleSystem particleSystem = Instantiate(particle, pos);
 
         //回転を自身に合わせる
         particleSystem.transform.rotation = rot;

@@ -721,7 +721,7 @@ GameObject:
   - component: {fileID: 2987330658612935208}
   m_Layer: 0
   m_Name: Coll.Jaw
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1177,7 +1177,7 @@ GameObject:
   - component: {fileID: 2987330658745212605}
   m_Layer: 0
   m_Name: Coll.UpperMouth
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1405,7 +1405,7 @@ GameObject:
   - component: {fileID: 2987330658807652272}
   m_Layer: 0
   m_Name: Coll.Eye_Left
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10561,7 +10561,7 @@ GameObject:
   - component: {fileID: 2987330659237781206}
   m_Layer: 0
   m_Name: Coll.Eye_Right
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12930,7 +12930,7 @@ GameObject:
   - component: {fileID: 2987330660420885329}
   m_Layer: 0
   m_Name: Coll.Neck
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13158,7 +13158,7 @@ GameObject:
   - component: {fileID: 2987330660524450488}
   m_Layer: 0
   m_Name: Coll.JawTip
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

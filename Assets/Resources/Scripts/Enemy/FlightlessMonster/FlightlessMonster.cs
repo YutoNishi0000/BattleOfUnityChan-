@@ -260,7 +260,7 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     //アニメーションイベント内でエフェクトをオンにする為の関数
     public void OnParticleSystem()
     {
-        CreateParticleSystem(_earthExplosion, _effectPos, transform.rotation, 3);
+        CreateParticleSystem2(_earthExplosion, _effectPos.position, transform.rotation, 3);
     }
 
     #endregion

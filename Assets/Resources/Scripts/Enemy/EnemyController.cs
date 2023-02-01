@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//ƒ‚ƒ“ƒXƒ^[‚ÌŠî’êƒNƒ‰ƒX
+//ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼ã®åŸºåº•ã‚¯ãƒ©ã‚¹
 public class EnemyController : Actor
 {
     // Start is called before the first frame update
@@ -26,29 +26,53 @@ public class EnemyController : Actor
     public virtual void Death() { }
 
     /// <summary>
-    /// ƒp[ƒeƒBƒNƒ‹ƒVƒXƒeƒ€‚ğ¶¬‚·‚é‚½‚ß‚ÌŠÖ”
+    /// ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã‚’ç”Ÿæˆã™ã‚‹ãŸã‚ã®é–¢æ•°
     /// </summary>
-    /// <param name="particle">¶¬‚µ‚½‚¢ƒp[ƒeƒBƒNƒ‹ƒVƒXƒeƒ€</param>
-    /// <param name="pos">¶¬‚µ‚½‚¢êŠ</param>
-    /// <param name="rot">w’è‚µ‚½‚¢‰ñ“]</param>
-    /// <param name="destroyTime">‰½•bŒã‚É‚±‚Ìƒp[ƒeƒBƒNƒ‹ƒVƒXƒeƒ€‚ğÁ‚·‚©</param>
+    /// <param name="particle">ç”Ÿæˆã—ãŸã„ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ </param>
+    /// <param name="pos">ç”Ÿæˆã—ãŸã„å ´æ‰€</param>
+    /// <param name="rot">æŒ‡å®šã—ãŸã„å›è»¢</param>
+    /// <param name="destroyTime">ä½•ç§’å¾Œã«ã“ã®ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã‚’æ¶ˆã™ã‹</param>
     public void CreateParticleSystem(ParticleSystem particle, Transform pos, Quaternion rot, float destroyTime)
     {
-        //ƒp[ƒeƒBƒNƒ‹ƒVƒXƒeƒ€ì¬•w’è‚µ‚½êŠ‚ÌqƒIƒuƒWƒFƒNƒg‚Éƒp[ƒeƒBƒNƒ‹ƒVƒXƒeƒ€‚ğİ’u
+        //ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ä½œæˆï¼†æŒ‡å®šã—ãŸå ´æ‰€ã®å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã‚’è¨­ç½®
         ParticleSystem particleSystem = Instantiate(particle, pos);
 
-        //‰ñ“]‚ğ©g‚É‡‚í‚¹‚é
+        //å›è»¢ã‚’è‡ªèº«ã«åˆã‚ã›ã‚‹
         particleSystem.transform.rotation = rot;
 
-        //ƒGƒtƒFƒNƒgÄ¶
+        //ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
         particleSystem.Play();
 
-        //3•bŒã‚ÉÁ‚·
+        //3ç§’å¾Œã«æ¶ˆã™
         Destroy(particleSystem, destroyTime);
+    }
+
+    public void CreateParticleSystem2(ParticleSystem particle, Vector3 pos, Quaternion rot, float destroyTime)
+    {
+        //ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ä½œæˆï¼†æŒ‡å®šã—ãŸå ´æ‰€ã®å­ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚·ã‚¹ãƒ†ãƒ ã‚’è¨­ç½®
+        ParticleSystem particleSystem = Instantiate(particle, pos, rot);
+
+        //ã‚¨ãƒ•ã‚§ã‚¯ãƒˆå†ç”Ÿ
+        particleSystem.Play();
+
+        //3ç§’å¾Œã«æ¶ˆã™
+        Destroy(particleSystem, destroyTime);
+    }
+
+    void StopParticleSystem(ParticleSystem particle)
+    {
+        StartCoroutine(nameof(CStopEffects), 3);
+        particle.Stop();
+        Destroy(particle);
+    }
+
+    IEnumerator CStopEffects(float time)
+    {
+        yield return new WaitForSeconds(time);
     }
 }
 
-//ƒ_ƒ[ƒWˆ——pƒCƒ“ƒ^[ƒtƒFƒCƒX
+//ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†ç”¨ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹
 interface IMonsterDamageable
 {
     public void Damage(int damage);
@@ -56,12 +80,12 @@ interface IMonsterDamageable
 
 
 /// <summary>
-/// ƒ‚ƒ“ƒXƒ^[Šî’êƒNƒ‰ƒX
+/// ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼åŸºåº•ã‚¯ãƒ©ã‚¹
 /// </summary>
 class Monster
 {
     /// <summary>
-    /// ƒ‚ƒ“ƒXƒ^[‚Ì‹Zî•ñ Šo‚¦‚é‹Z‚Í‚Q‚Â
+    /// ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼ã®æŠ€æƒ…å ± è¦šãˆã‚‹æŠ€ã¯ï¼’ã¤
     /// </summary>
     private Waza _waza1;
     private Waza _waza2;
@@ -111,7 +135,7 @@ class Monster
     }
 
 
-    //ƒ‚ƒ“ƒXƒ^[‚ÌUŒ‚
+    //ãƒ¢ãƒ³ã‚¹ã‚¿ãƒ¼ã®æ”»æ’ƒ
     public void Attack(Waza _waza, Animator _anim)
     {
         _moveLock = true;
@@ -119,21 +143,21 @@ class Monster
     }
 }
 
-//‹Z‚Ì’ŠÛƒNƒ‰ƒX
+//æŠ€ã®æŠ½è±¡ã‚¯ãƒ©ã‚¹
 abstract class Waza
 {
     /// <summary>
-    /// ‹Z‚Ì–¼‘O
+    /// æŠ€ã®åå‰
     /// </summary>
     public string waza_name;
 
     /// <summary>
-    /// ‹Z‚ÌˆĞ—Í
+    /// æŠ€ã®å¨åŠ›
     /// </summary>
     public int _damage;
 
     /// <summary>
-    /// ‹Z‚ğg‚Á‚½Œã‚ÌƒN[ƒ‹ƒ^ƒCƒ€
+    /// æŠ€ã‚’ä½¿ã£ãŸå¾Œã®ã‚¯ãƒ¼ãƒ«ã‚¿ã‚¤ãƒ 
     /// </summary>
     public float _coolTime;
 }

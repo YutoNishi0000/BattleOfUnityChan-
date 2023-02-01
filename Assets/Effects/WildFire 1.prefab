@@ -43,7 +43,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 6
   simulationSpeed: 1.25
-  stopAction: 0
+  stopAction: 2
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -4745,6 +4745,7 @@ GameObject:
   - component: {fileID: 4288416149911810}
   - component: {fileID: 198679442476388764}
   - component: {fileID: 199266017805695016}
+  - component: {fileID: 3241836577850308905}
   m_Layer: 0
   m_Name: WildFire 1
   m_TagString: Untagged
@@ -4779,7 +4780,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 6
   simulationSpeed: 1.25
-  stopAction: 0
+  stopAction: 2
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -9560,6 +9561,18 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &3241836577850308905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956197547661106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39156126c1685bd4caf0ad9c987e4f46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1982324152055030
 GameObject:
   m_ObjectHideFlags: 0
@@ -9603,7 +9616,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 6
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 2
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}

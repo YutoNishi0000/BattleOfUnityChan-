@@ -43,8 +43,8 @@ public class EnemyController : Actor
         //エフェクト再生
         particleSystem.Play();
 
-        //3秒後に消す
-        Destroy(particleSystem, destroyTime);
+        ////3秒後に消す
+        //Destroy(particleSystem, destroyTime);
     }
 
     public void CreateParticleSystem2(ParticleSystem particle, Vector3 pos, Quaternion rot, float destroyTime)
@@ -55,8 +55,8 @@ public class EnemyController : Actor
         //エフェクト再生
         particleSystem.Play();
 
-        //3秒後に消す
-        Destroy(particleSystem, destroyTime);
+        ////3秒後に消す
+        //Destroy(particleSystem, destroyTime);
     }
 
     void StopParticleSystem(ParticleSystem particle)

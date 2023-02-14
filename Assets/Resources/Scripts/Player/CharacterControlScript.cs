@@ -77,17 +77,23 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             moveControl();  //移動用関数
             RotationControl(); //旋回用関数
+
+            //もしも回避ボタン(Eボタン)が押されたら
             if (_avoidance)
             {
-                //AvoidanceManager();//回避用関数
+                //回避関数を実行
                 Avoidance();
+
+                //当たり判定の大きさを変更
                 DOTween.To(() => controller.height, (val) => { controller.height = val; }, 0, 0.3f);
 
+                //回避が終わった直後Eボタンを押し続けて止まって居たら初期化処理を行う
                 if (controller.velocity.magnitude <= 0)
                 {
                     UnLockAvoidance();
                 }
             }
+
             //最終的な移動処理
             //(これが無いとCharacterControllerに情報が送られないため、動けない)
             controller.Move(moveDirection * Time.deltaTime);
@@ -159,7 +165,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     {
         if (Input.GetKeyDown(KeyCode.Q) && !Gardflag)
         {
-            //myPV.RPC("GardCounter", PhotonTargets.AllViaServer);
             GardCounter();
             _counterAttack = true;
             Debug.Log("カウンター攻撃のための判定開始");
@@ -175,15 +180,22 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //[PunRPC]
     void GardCounter()
     {
+        //フラグをオンに
         Gardflag = true;
+
+        //各種アニメーション再生
         animator.SetFloat("ResetGard", 0);
         animator.SetFloat("Gard", 1);
+
+        //ガード終わり
         Invoke(nameof(UnLockGard), 2);
     }
 
     void UnLockGard()
     {
         animator.SetFloat("ResetGard", 1);
+
+        //フラグをオフに
         Gardflag = false;
     }
 
@@ -195,20 +207,16 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     }
 
     //回避(すぐに回避を繰り出すために値は０か1で調整)、入力管理は移動処理の中で行う、走っているときにしか繰り出せない、ボタンを押したら自動的に回避してくれるような関数を実装
-    //回避開始時のモーションと回避解除時のモーションを同期させたいためここで一通りの回避処理を記述している。
-    //[PunRPC]
     void Avoidance()
     {
-        //if (_avoidance)
-        {
-            animator.SetFloat("ResetAvoidance", 0);
-            animator.SetFloat("Avoidance", 1);
-        }
+        animator.SetFloat("ResetAvoidance", 0);
+        animator.SetFloat("Avoidance", 1);
 
         //一秒後に回避解除したい
         Invoke(nameof(UnLockAvoidance), 0.6f);
     }
 
+    //回避が終わったときに回避に使った値などの初期化処理を行う
     void UnLockAvoidance()
     {
         //回避解除
@@ -283,11 +291,16 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             ////ダメージを与える
             //LocalVariables.currentHP -= 10;
 
+            //敵からの攻撃を受けたとき
             if (col.CompareTag("AttackCollider"))
             {
+                //ガードボタンが押されていて、ガードモーションの最中であったら
                 if(_counterAttack)
                 {
+                    //ガードカウンターを実行
                     animator.SetTrigger("CounterAttack");
+
+                    //ガードカウンター用の攻撃力などがあるためそのフラグをオンに
                     _counterFlag = true;
                     return;
                 }
@@ -385,6 +398,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     public void EndCounterAttack()
     {
+        //カウンターアタックフラグをオフに
         _counterAttack = false;
         Debug.Log("カウンター攻撃のための判定終了");
     }

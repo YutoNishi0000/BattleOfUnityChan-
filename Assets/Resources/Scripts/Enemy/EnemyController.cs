@@ -5,18 +5,6 @@ using UnityEngine;
 //モンスターの基底クラス
 public class EnemyController : Actor
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public virtual void Move() { }
 
     public virtual void Attack() { }
@@ -85,7 +73,7 @@ interface IMonsterDamageable
 class Monster
 {
     /// <summary>
-    /// モンスターの技情報 覚える技は２つ
+    /// モンスターの技情報 覚える技は６つ
     /// </summary>
     private Waza _waza1;
     private Waza _waza2;

@@ -43,6 +43,7 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
     public Slider _BulkHPBar;
     //public AttackState attackType;
 
+
     public struct AttackInfo
     {
         public AttackState _attackState;
@@ -86,6 +87,9 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
         _monster.Waza3 = new TailAttack();
         _monster.Waza4 = new FireBall();
         _monster.Waza5 = new FlyingFireBall();
+
+        //自身のオブジェクトをセット
+        Instance.SetEnemyObject(this.gameObject);
     }
 
     private void Update()

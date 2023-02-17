@@ -81,6 +81,9 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
             _cols[i].enabled = false;
             Debug.Log("攻撃の当たり判定を初期化");
         }
+
+        //自身のオブジェクトをセット
+        Instance.SetEnemyObject(this.gameObject);
     }
 
     // Update is called once per frame

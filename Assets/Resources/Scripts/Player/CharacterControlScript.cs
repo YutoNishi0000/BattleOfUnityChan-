@@ -27,6 +27,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     private float _avoidSpeed = 10f;
     Vector3 InitialPos;
     Vector3 avoidDirection;
+    GameObject enemyObj;
 
     Vector3 targetDirection;        //移動する方向のベクトル
     Vector3 moveDirection = Vector3.zero;
@@ -43,6 +44,54 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     public bool _counterCollider;
     bool _counterFlag;
     bool _finishLock;
+
+
+
+    //　IKで角度を有効にするかどうか
+    [SerializeField]
+    private bool useIKRot = true;
+    //　地面とするレイヤー
+    [SerializeField]
+    private LayerMask fieldLayer;
+    //　右足のウエイト
+    private float rightFootWeight = 0f;
+    //　左足のウエイト
+    private float leftFootWeight = 0f;
+    //　右足の位置
+    private Vector3 rightFootIKPosition;
+    //　左足の位置
+    private Vector3 leftFootIKPosition;
+    //　右足の角度
+    private Quaternion rightFootRot;
+    //　左足の角度
+    private Quaternion leftFootRot;
+    //　右足と左足の距離
+    private float distance;
+    //　足を付く位置のオフセット値
+    [SerializeField]
+    private Vector3 offset = new Vector3(0f, 0.06f, 0f);
+    //　コライダの中心位置
+    private Vector3 defaultCenter;
+    //　レイを飛ばす距離
+    [SerializeField]
+    private float rayRange = 1f;
+
+    //　体の重心を調整する時のスピード
+    [SerializeField]
+    private float bodyPositionSpeed = 50f;
+
+    //　レイを飛ばす位置の調整値
+    [SerializeField]
+    private Vector3 rayPositionOffset = Vector3.up * 0.3f;
+
+    //　体の重心を変更するかどうか
+    [SerializeField]
+    private bool isChangeBodyPosition = true;
+    //　前回の体の重心位置
+    private Vector3 preBodyPosition;
+    //　足のレイが地面についているかどうか
+    private bool rightFootGrounded;
+    private bool leftFootGrounded;
 
     // Start is called before the first frame update
     void Start()
@@ -125,7 +174,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if (controller.isGrounded)
         {
             //移動のベクトルを計算
-            moveDirection = targetDirection * speed;
+            moveDirection = targetDirection * GetDashSpeed(speed);
 
             //Jumpボタンでジャンプ処理
             if (Input.GetButton("Jump"))
@@ -160,6 +209,134 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
     }
 
+    float GetDashSpeed(float speed)
+    {
+        //もし左シフトを押した、またはスライディング回避中であれば
+        if(Input.GetKey(KeyCode.LeftShift) || _avoidance)
+        {
+            //普段のスピードの1.5倍のスピードの値を返す
+            return speed * 1.5f;
+        }
+        else
+        {
+            //特にダッシュ処理が行われていなければ
+            return speed;
+        }
+    }
+
+    /// <summary>
+    /// 顔のIKをモンスターの方向に向くように変更する
+    /// </summary>
+    public void OnAnimatorIK(int layerIndex)
+    {
+        //　アニメーションパラメータからIKのウエイトを取得
+        rightFootWeight = animator.GetFloat("RightFootWeight");
+        leftFootWeight = animator.GetFloat("LeftFootWeight");
+
+        //　右足用のレイの視覚化
+        Debug.DrawRay(animator.GetIKPosition(AvatarIKGoal.RightFoot) + rayPositionOffset, Vector3.down * rayRange, Color.red);
+        //　右足用のレイを飛ばす処理
+        var ray = new Ray(animator.GetIKPosition(AvatarIKGoal.RightFoot) + rayPositionOffset, Vector3.down);
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, rayRange, fieldLayer))
+        {
+            rightFootGrounded = true;
+            rightFootIKPosition = hit.point;
+
+            //　右足IKの設定
+            animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, rightFootWeight);
+            animator.SetIKPosition(AvatarIKGoal.RightFoot, rightFootIKPosition + offset);
+            if (useIKRot)
+            {
+                rightFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+                animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, rightFootWeight);
+                animator.SetIKRotation(AvatarIKGoal.RightFoot, rightFootRot);
+            }
+        }
+        else
+        {
+            rightFootGrounded = false;
+        }
+
+        //　左足用のレイを飛ばす処理
+        ray = new Ray(animator.GetIKPosition(AvatarIKGoal.LeftFoot) + rayPositionOffset, Vector3.down);
+        //　左足用のレイの視覚化
+        Debug.DrawRay(animator.GetIKPosition(AvatarIKGoal.LeftFoot) + rayPositionOffset, Vector3.down * rayRange, Color.red);
+
+        if (Physics.Raycast(ray, out hit, rayRange, fieldLayer))
+        {
+            leftFootGrounded = true;
+            leftFootIKPosition = hit.point;
+
+            //　左足IKの設定
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, leftFootWeight);
+            animator.SetIKPosition(AvatarIKGoal.LeftFoot, leftFootIKPosition + offset);
+
+            if (useIKRot)
+            {
+                leftFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+                animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, leftFootWeight);
+                animator.SetIKRotation(AvatarIKGoal.LeftFoot, leftFootRot);
+            }
+        }
+        else
+        {
+            leftFootGrounded = false;
+        }
+        //　体の重心を動かす場合
+        if (isChangeBodyPosition && rightFootGrounded && leftFootGrounded)
+        {
+            //　左右の足とキャラクターの足元の位置との距離を計算
+            var rightFootDistance = rightFootIKPosition.y - transform.position.y;
+            var leftFootDistance = leftFootIKPosition.y - transform.position.y;
+            //　左右の足の位置がより下にある方を距離として使う
+            var distance = rightFootDistance < leftFootDistance ? rightFootDistance : leftFootDistance;
+            //　体の重心を下にある方の足に合わせて下げる
+            var nowBodyPosition = animator.bodyPosition + Vector3.up * distance;
+            //　徐々に変更するようにしているが、たぶんコメントにしてある処理のように一気に変えても問題ない
+            animator.bodyPosition = Vector3.Lerp(preBodyPosition, nowBodyPosition, bodyPositionSpeed * Time.deltaTime);
+            preBodyPosition = animator.bodyPosition;
+            //animator.bodyPosition = nowBodyPosition;
+
+        }
+
+
+
+        //=====================================================================================================================
+        // ここからは顔のIKを変更する処理に移る
+        //=====================================================================================================================
+        Vector3 target_pos = new Vector3(enemyObj.transform.position.x, 0, enemyObj.transform.position.z);
+        Vector3 char_pos = new Vector3(transform.position.x, 0, transform.position.z);
+        Vector3 direction = target_pos - char_pos;
+
+        //水平方向でモンスター方向のベクトルと、自分が動いている方向のベクトルとの角度を取得
+        float angle = Vector3.Angle(direction, moveDirection);
+
+        //↑で求めた角度が150度以上であれば
+        if(angle >= 150)
+        {
+            //ここからしたの処理は行わない
+            return;
+        }
+
+        animator.SetLookAtPosition(enemyObj.transform.position);
+        animator.SetLookAtWeight(1.0f, 0.0f, 1f, 0.0f, 0.8f);
+    }
+
+    //エネミーオブジェクトをセット
+    public void SetEnemyObject(GameObject enemyObject)
+    {
+        enemyObj = enemyObject;
+    }
+
+    //エネミーオブジェクトを取得する関数
+    public GameObject GetEnemyObject()
+    {
+        return enemyObj;
+    }
+
     //
     void GardManager()
     {
@@ -177,7 +354,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     }
 
     //ガード->タイミングがあればカウンター攻撃
-    //[PunRPC]
     void GardCounter()
     {
         //フラグをオンに
@@ -223,7 +399,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         animator.SetFloat("ResetAvoidance", 1);
         _avoidance = false;
         //引数はラムダ式を使って変数を設定
-        DOTween.To(() => controller.height, (val) => { controller.height = val; }, 2, 1f);
+        DOTween.To(() => controller.height, (val) => { controller.height = val; }, 1.9f, 1f);
     }
 
     void RotationControl()  //キャラクターが移動方向を変えるときの処理
@@ -309,7 +485,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     }
 
     //被弾処理同期用RPC
-    //[PunRPC]
     void Damaged()
     {
         MoveLock = true;    //硬直のため移動ロックON
@@ -453,12 +628,12 @@ interface IDamage
 //基底クラス
 public class Actor : MonoBehaviour
 {
-    protected CharacterController Instance;
+    protected CharacterControlScript Instance;
     protected GameSystem gameSystem;
 
     private void Awake()
     {
-        Instance = FindObjectOfType<CharacterController>();
+        Instance = FindObjectOfType<CharacterControlScript>();
         gameSystem = FindObjectOfType<GameSystem>();
     }
 }

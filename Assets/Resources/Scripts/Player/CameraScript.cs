@@ -30,19 +30,16 @@ public class CameraScript : MonoBehaviour
     void Start()
     {
         currentX += 180;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
         //マウス右クリックを押しているときだけマウスの移動量に応じてカメラが回転
-        if (Input.GetMouseButton(1))
-        {
-            currentX += Input.GetAxis("Mouse X") * moveX;
-            currentY += Input.GetAxis("Mouse Y") * moveY;
-            currentY = Mathf.Clamp(currentY, YAngle_MIN, YAngle_MAX);
-
-        }
+        currentX += Input.GetAxis("Mouse X") * moveX;
+        currentY += Input.GetAxis("Mouse Y") * moveY;
+        currentY = Mathf.Clamp(currentY, YAngle_MIN, YAngle_MAX);
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel"), distance_min, distance_max);
     }
 

@@ -3218,7 +3218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _monsters:
-  - {fileID: 753343460930500148, guid: de89a4c119f938446859477a4ed29f60, type: 3}
+  - {fileID: 193776, guid: e43ad44e4fa9b5047a3a1b2ea2ef1f91, type: 3}
   - {fileID: 2987330659199424614, guid: 08ec126924d105042a63f31404bb0dda, type: 3}
   - {fileID: 753343460930500148, guid: de89a4c119f938446859477a4ed29f60, type: 3}
   - {fileID: 5632228044667326945, guid: 49db8f30cd7f5e64f97222569fcbd3cf, type: 3}

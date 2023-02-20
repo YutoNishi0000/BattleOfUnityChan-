@@ -41,10 +41,6 @@ public class CameraScript : MonoBehaviour
         currentY += Input.GetAxis("Mouse Y") * moveY;
         currentY = Mathf.Clamp(currentY, YAngle_MIN, YAngle_MAX);
         distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel"), distance_min, distance_max);
-    }
-
-    void LateUpdate()
-    {
         if (target != null)  //target‚ªw’è‚³‚ê‚é‚Ü‚Å‚ÌƒGƒ‰[‰ñ”ğ
         {
             var targetVec = new Vector3(target.position.x, 0, target.position.z) + offset;

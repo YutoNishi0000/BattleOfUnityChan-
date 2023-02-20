@@ -14,6 +14,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     public Animator animator;                 //モーションをコントロールするためAnimatorを取得
     public CharacterController controller;    //キャラクター移動を管理するためCharacterControllerを取得
     private PlayerAnimationEvents animEve;
+    private PlayerSEController audioManager;
 
     public Slider _bulkHPBar;
     public Slider _HPBar;
@@ -109,6 +110,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
 
         Sword.GetComponent<Collider>().enabled = false;
+        audioManager = GetComponent<PlayerSEController>();
     }
 
     // Update is called once per frame
@@ -162,6 +164,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         //キーボード入力を取得
         float v = Input.GetAxisRaw("Vertical");         //InputManagerの↑↓の入力       
         float h = Input.GetAxisRaw("Horizontal");       //InputManagerの←→の入力 
+        //audioManager.Play("Run");
 
         //カメラの正面方向ベクトルからY成分を除き、正規化してキャラが走る方向を取得
         Vector3 forward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -201,6 +204,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             {
                 _avoidance = true;
                 avoidDirection = transform.forward;
+                audioManager.Play("Avoidance");
             }
         }
         else    //(移動入力が無いと)
@@ -344,6 +348,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             GardCounter();
             _counterAttack = true;
+            audioManager.Play("Gard");
             Debug.Log("カウンター攻撃のための判定開始");
         }
         else if (Input.GetKeyUp(KeyCode.Q) && Gardflag)
@@ -427,6 +432,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             //移動ロック開始
             MoveLock = true;
             StartCoroutine(_ballattack(1f));
+            AttackSE();
         }
     }
 
@@ -475,6 +481,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
                 {
                     //ガードカウンターを実行
                     animator.SetTrigger("CounterAttack");
+                    audioManager.Play("Counter");
 
                     //ガードカウンター用の攻撃力などがあるためそのフラグをオンに
                     _counterFlag = true;
@@ -507,11 +514,13 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if(LocalVariables.currentHP <= 0)
         {
             Dead();
+            audioManager.Play("GAMEOVER");
         }
         else
         {
             Damaged();
             StartCoroutine(_rigor(.5f));    //被弾硬直処理
+            DamageSE();
         }
     }
 
@@ -611,6 +620,51 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             animator.SetTrigger("GAMEOVER");
             _finishLock = true;
+        }
+    }
+
+    #endregion
+
+    #region 音関連
+
+    //4種類ある攻撃音声をランダムに鳴らしたい
+    void AttackSE()
+    {
+        int num = Random.Range(0, 4);
+
+        switch(num)
+        {
+            case 0:
+                audioManager.Play("Attack");
+                break;
+            case 1:
+                audioManager.Play("Attack2");
+                break;
+            case 2:
+                audioManager.Play("Attack3");
+                break;
+            case 3:
+                audioManager.Play("Attack4");
+                break;
+        }
+    }
+
+    //3種類あるダメージ音をランダムに鳴らしたい
+    void DamageSE()
+    {
+        int num = Random.Range(0, 3);
+
+        switch (num)
+        {
+            case 0:
+                audioManager.Play("GET_DAMAGE");
+                break;
+            case 1:
+                audioManager.Play("GET_DAMAGE2");
+                break;
+            case 2:
+                audioManager.Play("GET_DAMAGE3");
+                break;
         }
     }
 

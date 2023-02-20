@@ -21,7 +21,7 @@ public class LastDetection : EnemyController
 
     private void Update()
     {
-        if (_lastMonster._endScream && !_lastMonster._landing && _lastMonster._navMeshAgent.velocity.magnitude < 0.5f && !_lastMonster.a)
+        if (_lastMonster._endScream && !_lastMonster._landing && _lastMonster._navMeshAgent.velocity.magnitude < 0.5f && !_lastMonster.a && _lastMonster._flyingMove)
         {
             _lastMonster._navMeshAgent.enabled = false;
             _lastMonster.transform.DOMove(flyingPos.transform.position, 3);

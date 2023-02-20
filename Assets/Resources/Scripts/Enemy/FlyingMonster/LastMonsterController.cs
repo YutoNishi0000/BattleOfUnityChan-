@@ -5,7 +5,7 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class LastMonsterController : EnemyController
+public class LastMonsterController : EnemyController, IMonsterDamageable
 {
     //攻撃方法
     public enum AttackState
@@ -41,7 +41,11 @@ public class LastMonsterController : EnemyController
     public Slider _HPBar;
     public Slider _BulkHPBar;
     public bool a;
-
+    public bool _flyingMove;                      //空中移動を開始するかどうか
+    private BlendSkybox _skyBox;
+    [SerializeField] private Material _skyStateShader;
+    [SerializeField] private Material _defaultShader;
+    private Vector3 _playerPos;
 
     public struct AttackInfo
     {
@@ -64,6 +68,8 @@ public class LastMonsterController : EnemyController
         a = false;
         _anim = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _skyBox = FindObjectOfType<BlendSkybox>();
+        gameObject.GetComponentInChildren<SkinnedMeshRenderer>().material = _defaultShader;
 
         _monster = new Monster();
         _enemyState = new EnemyState();
@@ -80,6 +86,7 @@ public class LastMonsterController : EnemyController
         GAME_TIME = 0;
         TURN_STATE_TIME = 15;
         _Landing = 1;
+        _flyingMove = false;
 
         //技をセット
         _monster.Waza1 = new Scream();
@@ -100,6 +107,15 @@ public class LastMonsterController : EnemyController
         }
 
         EnemyStateManager();
+
+        if (_landing)
+        {
+            transform.LookAt(Instance.gameObject.transform.position);
+        }
+        else
+        {
+            transform.rotation = Quaternion.identity;
+        }
     }
 
     //地面についているときの処理
@@ -122,6 +138,9 @@ public class LastMonsterController : EnemyController
             if (_Landing == 1)
             {
                 _anim.SetTrigger("Land");
+                _skyBox.InitializeSkybox();
+                _playerPos = Instance.gameObject.transform.position;
+                gameObject.GetComponentInChildren<SkinnedMeshRenderer>().material = _defaultShader;
                 a = true;
             }
             else if (_Landing == -1)
@@ -134,7 +153,7 @@ public class LastMonsterController : EnemyController
 
         if(a)
         {
-            transform.DOMove(Instance.gameObject.transform.position, 3);
+            transform.DOMove(_playerPos, 2);
         }
 
         Debug.Log("ランディングの値は" + _Landing);
@@ -330,6 +349,13 @@ public class LastMonsterController : EnemyController
     public void StartFlying()
     {
         _landing = false;
+        _skyBox.FadeSkybox();
+        gameObject.GetComponentInChildren<SkinnedMeshRenderer>().material = _skyStateShader;
+    }
+
+    public void StartMoveFlyPos()
+    {
+        _flyingMove = true;
     }
 
     public void StartLand()
@@ -342,6 +368,7 @@ public class LastMonsterController : EnemyController
         _landing = true;
         _navMeshAgent.enabled = true;
         a = false;
+        _flyingMove = false;
     }
 
     public void OnParticleSystem()

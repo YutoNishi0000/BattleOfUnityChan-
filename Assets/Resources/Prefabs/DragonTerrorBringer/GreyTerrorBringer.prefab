@@ -12817,9 +12817,9 @@ GameObject:
   - component: {fileID: 5632228044676753879}
   - component: {fileID: 5632228044667186185}
   - component: {fileID: 5632228044667186184}
-  - component: {fileID: 4762040585453123713}
   - component: {fileID: 7146303046071929279}
   - component: {fileID: 5076605396604212121}
+  - component: {fileID: 5945881035439705481}
   m_Layer: 0
   m_Name: GreyTerrorBringer
   m_TagString: Enemy
@@ -12945,21 +12945,6 @@ MonoBehaviour:
       isCreate: 1
       viewAdvanced: 1
     modifyNameEnabled: 0
---- !u!114 &4762040585453123713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5632228044667326945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bf3cc6892cf3664b980c3658fd2fdf4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fireflame: {fileID: 198637950067575458, guid: 007c57e2df8e9b144b99f471b84f3d56,
-    type: 3}
-  _fireflamePos: {fileID: 4349169813931136745}
 --- !u!114 &7146303046071929279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12974,6 +12959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _endAttack: 0
   _endScream: 0
+  _landing: 0
   _navMeshAgent: {fileID: 0}
   _isMove: 0
   _enemyState: 0
@@ -12982,7 +12968,10 @@ MonoBehaviour:
   TURN_STATE_TIME: 0
   _HPBar: {fileID: 341050383770085261}
   _BulkHPBar: {fileID: 1067787875428172192}
-  _flyAttack: 0
+  a: 0
+  _flyingMove: 0
+  _skyStateShader: {fileID: 2100000, guid: 7bddb847673d6aa48bc307da98473ec9, type: 2}
+  _defaultShader: {fileID: 2100000, guid: dcc7344671ccf0044a1fb5038007860e, type: 2}
 --- !u!114 &5076605396604212121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13000,6 +12989,22 @@ MonoBehaviour:
   - {fileID: 5632228045329269404}
   - {fileID: 5632228044883683501}
   _damage: 0
+--- !u!114 &5945881035439705481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5632228044667326945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ed20b50ccc69364281718ed1fa9dc8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fireflame:
+  - {fileID: 198637950067575458, guid: 48bbcdbf9aa88be42aa4cd9e5393a494, type: 3}
+  - {fileID: 198637950067575458, guid: f28112629fe47a84c9b20dac9c79b112, type: 3}
+  _fireflamePos: {fileID: 4349169813931136745}
 --- !u!1 &5632228044667327693
 GameObject:
   m_ObjectHideFlags: 0

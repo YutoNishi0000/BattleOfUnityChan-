@@ -41,6 +41,8 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
     private float MATERIAL_ALPHA = 1;
     public Slider _HPBar;
     public Slider _BulkHPBar;
+    private AudioSource _audioSource;
+    [SerializeField] private AudioClip[] _audioClip;
     //public AttackState attackType;
 
 
@@ -64,12 +66,13 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
     {
         _anim = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _audioSource = GetComponent<AudioSource>();
 
         _monster = new Monster();
         _enemyState = new EnemyState();
         _enemyState = EnemyState.Landing;
         //attackType = new AttackState();
-        ENEMY_HP = 100;
+        ENEMY_HP = 1000;
 
         //各種フラグ
         _endAttack = false;
@@ -251,14 +254,22 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
 
     #region 被弾関連処理
 
-    public void Damage(int damage)
+    public void Damage(int damage, bool counter)
     {
+        if(!_endScream)
+        {
+            return;
+        }
+
         ENEMY_HP -= damage;
         _BulkHPBar.value = ENEMY_HP;
         _HPBar.DOValue(ENEMY_HP, 0.5f);
         if (ENEMY_HP > 0)
         {
-            _anim.SetTrigger("Hit");
+            if (counter)
+            {
+                _anim.SetTrigger("Hit");
+            }
         }
         else
         {
@@ -269,8 +280,14 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
             }
 
             _anim.SetTrigger("DeathTrigger");
+            _audioSource.PlayOneShot(_audioClip[1]);
             _isDead = true;
         }
+    }
+
+    public void ShakeUI()
+    {
+        GetComponent<PerlinNoiseController>().StartShake(0.3f, 100, 10);
     }
 
     #endregion
@@ -314,6 +331,12 @@ public class FlyingMonster : EnemyController, IMonsterDamageable
     #endregion
 
     #region アニメーションイベント
+
+    public void StartScream()
+    {
+        GameSystem.Instance._shake.Shake(3, 0.1f, 1);
+        _audioSource.PlayOneShot(_audioClip[0]);
+    }
 
     //遠吠えが終わったときに呼び出される
     public void EndScream()

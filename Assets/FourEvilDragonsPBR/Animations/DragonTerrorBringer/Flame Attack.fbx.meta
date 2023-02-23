@@ -580,7 +580,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.27866825
-        functionName: OnParticleSystem
+        functionName: OnNomalParticleSystem
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

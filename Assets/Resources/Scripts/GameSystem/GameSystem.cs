@@ -1,9 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class GameSystem : MonoBehaviour
 {
+    #region シングルトン化
+
+    public static GameSystem Instance;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    #endregion
+
     public GameObject[] _monsters;
 
     public GameObject[] _monstersUI;
@@ -11,6 +32,8 @@ public class GameSystem : MonoBehaviour
     public static int DeathMonsterNum;    //倒したモンスターの数
 
     public bool _instantiateLock;    //モンスターの生成をロックするためのフラグ
+
+    public CameraShakeController _shake;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +43,7 @@ public class GameSystem : MonoBehaviour
         //{
         //    _monstersUI[i].SetActive(false);
         //}
+        _shake = GetComponent<CameraShakeController>();
 
         DeathMonsterNum = 0;
         GenerateMonster(DeathMonsterNum);

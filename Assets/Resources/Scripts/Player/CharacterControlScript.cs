@@ -43,8 +43,12 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     public bool _avoidance;/* = false*/                 //回避フラグ 
     public bool _counterAttack;
     public bool _counterCollider;
-    bool _counterFlag;
+    //bool _counterFlag;
     bool _finishLock;
+    bool _gardflag;
+    // 画面を赤にするためのイメージ
+    public Image img;
+    [SerializeField] private GameObject _swordMiracle;   //剣の軌跡エフェクト
 
 
 
@@ -99,18 +103,14 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     {
         _counterAttack = false;
         _counterCollider = false;
-        _counterFlag = false;
+        //_counterFlag = false;
         _finishLock = false;
-
-        //if (myPV.isMine)    //自キャラであれば実行
-        {
-            //MainCameraのtargetにこのゲームオブジェクトを設定
-            mainCam = Camera.main;
-            mainCam.GetComponent<CameraScript>().target = this.gameObject.transform;
-        }
+        _gardflag = false;
 
         Sword.GetComponent<Collider>().enabled = false;
         audioManager = GetComponent<PlayerSEController>();
+        img.color = Color.clear;
+        _swordMiracle.SetActive(false);
     }
 
     // Update is called once per frame
@@ -122,6 +122,8 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
 
         GardManager();
+
+        img.color = Color.Lerp(this.img.color, Color.clear, Time.deltaTime);
 
         //移動ロックONまたは死亡フラグONであれば移動、攻撃をさせない
         if (!MoveLock && !Deadflag && !Gardflag)
@@ -349,6 +351,9 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             GardCounter();
             _counterAttack = true;
             audioManager.Play("Gard");
+
+            //0.5秒後にカウンターフラグがオフに
+            Invoke(nameof(EndCounterAttack), 3f);
             Debug.Log("カウンター攻撃のための判定開始");
         }
         else if (Input.GetKeyUp(KeyCode.Q) && Gardflag)
@@ -422,7 +427,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
     }
 
-    //ボール攻撃
     void AttackControl()
     {
         if (Input.GetMouseButtonDown(0) && !animator.IsInTransition(0))	//　遷移途中でない
@@ -453,7 +457,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     void OnTriggerEnter(Collider col)
     {
-        if (Deadflag || invincible || _avoidance) //死亡時または無敵時、回避時は処理しない
+        if (Deadflag || invincible) //死亡時または無敵時、回避時、ガード時は処理しない
         {
             return;
         }
@@ -484,7 +488,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
                     audioManager.Play("Counter");
 
                     //ガードカウンター用の攻撃力などがあるためそのフラグをオンに
-                    _counterFlag = true;
+                    //_counterFlag = true;
                     return;
                 }
             }
@@ -494,6 +498,11 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //被弾処理同期用RPC
     void Damaged()
     {
+        if (Gardflag)
+        {
+            return;
+        }
+
         MoveLock = true;    //硬直のため移動ロックON
         animator.SetTrigger("DamagedTrigger");  //ダメージアニメーション
     }
@@ -507,6 +516,14 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     public void Damage(int damage)
     {
+        //回避時は無敵
+        if (_avoidance)
+        {
+            return;
+        }
+
+        // *画面を赤塗りにする
+        img.color = new Color(0.5f, 0f, 0f, 0.5f);
         LocalVariables.currentHP -= damage;
         _bulkHPBar.value = LocalVariables.currentHP;
         _HPBar.DOValue(LocalVariables.currentHP, 0.5f);
@@ -518,6 +535,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
         else
         {
+            //ガード時HPは減るけど、被弾モーションはしない
             Damaged();
             StartCoroutine(_rigor(.5f));    //被弾硬直処理
             DamageSE();
@@ -551,6 +569,12 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         yield return new WaitForSeconds(5f);    //死亡後無敵時間
         invincible = false; //無敵解除
     }
+
+    public void ShakeUI()
+    {
+        GetComponent<PerlinNoiseController>().StartShake(0.3f, 100, 10);
+    }
+
     #endregion
 
     #region アニメーションイベント
@@ -558,13 +582,16 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //攻撃アニメーション開始時に呼び出す
     public void StartAttack()
     {
-        if(_counterFlag)
+        if(_counterAttack/*_counterFlag*/)
         {
             _counterCollider = true;
         }
 
         //剣の当たり判定をオンに
         Sword.GetComponent<Collider>().enabled = true;
+
+        //剣の軌跡を表示
+        _swordMiracle.SetActive(true);
     }
 
     //攻撃アニメーション終了時に呼び出す
@@ -573,11 +600,14 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if(_counterCollider)
         {
             _counterCollider = false;
-            _counterFlag = false;
+            //_counterFlag = false;
         }
 
         //剣の当たり判定をオフに
         Sword.GetComponent<Collider>().enabled = false;
+
+        //剣の軌跡を非表示
+        _swordMiracle.SetActive(false);
     }
 
     public void EndCounterAttack()
@@ -676,6 +706,8 @@ interface IDamage
 {
     //ダメージ処理
     public void Damage(int damage);
+
+    public void ShakeUI();
 }
 
 

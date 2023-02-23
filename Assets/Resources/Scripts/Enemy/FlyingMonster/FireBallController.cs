@@ -25,17 +25,10 @@ public class FireBallController : EnemyController
         if(other.gameObject.CompareTag("Ground")/*other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("AttackCollider")*/)
         {
             Debug.Log("消す処理を行いません");
+            GameSystem.Instance._shake.Shake(0.8f, 0.1f, 1);
             CreateParticleSystem2(_explosion, transform.position, Quaternion.identity, 3.0f);
             CreateParticleSystem2(_fire, new Vector3(transform.position.x, transform.position.y - 0.8f, transform.position.z), Quaternion.identity, 7.0f);
             Destroy(gameObject);
-            //return;
         }
-
-        //何かしらに当たったら自身を消滅させ炎エフェクトをしばらくの間表示する
-        //Destroy(gameObject);
-        //Instantiate(_explosion, other.gameObject.transform.position, Quaternion.identity);
-        //Instantiate(_fire, other.gameObject.transform.position, Quaternion.identity);
-        //Destroy(_explosion, 10f);
-        //Destroy(_fire, 15f);
     }
 }

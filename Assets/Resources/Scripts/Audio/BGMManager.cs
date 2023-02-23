@@ -61,6 +61,9 @@ public class BGMManager : MonoBehaviour
                 _audioSource.Play();
                 _passCount++;
                 break;
+            case 4:
+                _audioSource.Stop();
+                break;
         }
     }
 }

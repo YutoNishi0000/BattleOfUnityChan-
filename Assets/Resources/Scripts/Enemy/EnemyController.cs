@@ -63,9 +63,10 @@ public class EnemyController : Actor
 //ダメージ処理用インターフェイス
 interface IMonsterDamageable
 {
-    public void Damage(int damage);
-}
+    public void Damage(int damage, bool counter);
 
+    public void ShakeUI();
+}
 
 /// <summary>
 /// モンスター基底クラス

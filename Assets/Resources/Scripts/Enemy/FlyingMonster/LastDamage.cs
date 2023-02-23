@@ -9,7 +9,7 @@ public class LastDamage : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _last = GetComponentInParent<LastAnimationEvent>();
+        _last = FindObjectOfType<LastAnimationEvent>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,6 +18,18 @@ public class LastDamage : MonoBehaviour
         {
             IDamage damageable = other.gameObject.GetComponent<IDamage>();
             damageable.Damage(_last._damage);
+            damageable.ShakeUI();
+            Debug.Log("プレイヤーに攻撃");
+        }
+    }
+
+    private void OnParticleCollision(GameObject other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            IDamage damageable = other.GetComponent<IDamage>();
+            damageable.Damage(_last._damage);
+            damageable.ShakeUI();
             Debug.Log("プレイヤーに攻撃");
         }
     }

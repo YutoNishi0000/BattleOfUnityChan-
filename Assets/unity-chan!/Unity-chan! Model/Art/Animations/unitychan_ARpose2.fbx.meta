@@ -5993,14 +5993,7 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 1
-        functionName: EndCounterAttack
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask:
       - path: 
         weight: 1
@@ -7908,7 +7901,8 @@ ModelImporter:
     - name: J_L_Sode_B01
       parentName: 
       position: {x: -0.15087235, y: -0.00000004918207, z: 0.000000007472267}
-      rotation: {x: 0.00000003877643, y: -0.0000000069611428, z: -0.00000030390677, w: 1}
+      rotation: {x: 0.00000003877643, y: -0.0000000069611428, z: -0.00000030390677,
+        w: 1}
       scale: {x: 0.9999998, y: 1.0000011, z: 1}
     - name: J_L_Sode_C00
       parentName: 
@@ -7918,7 +7912,8 @@ ModelImporter:
     - name: J_L_Sode_C01
       parentName: 
       position: {x: -0.16287744, y: 0.0000006967097, z: 0.000002349992}
-      rotation: {x: -0.000000041158827, y: 0.00000004934623, z: 0.000000004588048, w: 1}
+      rotation: {x: -0.000000041158827, y: 0.00000004934623, z: 0.000000004588048,
+        w: 1}
       scale: {x: 1, y: 1.0000023, z: 1.0000015}
     - name: J_L_Sode_D00
       parentName: 
@@ -7928,7 +7923,8 @@ ModelImporter:
     - name: J_L_Sode_D01
       parentName: 
       position: {x: -0.14457537, y: -0.0008122077, z: -0.007398419}
-      rotation: {x: -0.0000000019595696, y: -0.000000017090267, z: -0.0000003567963, w: 1}
+      rotation: {x: -0.0000000019595696, y: -0.000000017090267, z: -0.0000003567963,
+        w: 1}
       scale: {x: 0.9999978, y: 0.99999505, z: 0.9999937}
     - name: Character1_Neck
       parentName: 
@@ -8033,7 +8029,8 @@ ModelImporter:
     - name: J_L_HairTail_06
       parentName: 
       position: {x: -0.15477833, y: 0.00000034743925, z: 0.0000002835673}
-      rotation: {x: -0.00000003025536, y: 0.000000016655541, z: -0.000000018210219, w: 1}
+      rotation: {x: -0.00000003025536, y: 0.000000016655541, z: -0.000000018210219,
+        w: 1}
       scale: {x: 1.0000013, y: 1.0000014, z: 1.0000015}
     - name: J_L_HeadRibbon_00
       parentName: 
@@ -8278,7 +8275,8 @@ ModelImporter:
     - name: J_R_Sode_C01
       parentName: 
       position: {x: -0.16287705, y: 0.00000084078636, z: -0.00000290741}
-      rotation: {x: 0.000000052315954, y: -0.00000009979554, z: 0.00000011341494, w: 1}
+      rotation: {x: 0.000000052315954, y: -0.00000009979554, z: 0.00000011341494,
+        w: 1}
       scale: {x: 1.0000024, y: 1.000001, z: 1.0000024}
     - name: J_R_Sode_D00
       parentName: 
@@ -8288,7 +8286,8 @@ ModelImporter:
     - name: J_R_Sode_D01
       parentName: 
       position: {x: -0.14476271, y: -0.00000040819512, z: -0.00000004307191}
-      rotation: {x: -0.00000005341916, y: -0.000000013628388, z: -0.00000023982915, w: 1}
+      rotation: {x: -0.00000005341916, y: -0.000000013628388, z: -0.00000023982915,
+        w: 1}
       scale: {x: 1.0000008, y: 1.000002, z: 0.99999976}
     - name: J_Mune_root_00
       parentName: 
@@ -8313,7 +8312,8 @@ ModelImporter:
     - name: J_Mune_root_01
       parentName: 
       position: {x: 0.0000000031761873, y: 0.037437074, z: 0.03956033}
-      rotation: {x: -0.000000054408613, y: -0.000000023399588, z: -0.000000009834053, w: 1}
+      rotation: {x: -0.000000054408613, y: -0.000000023399588, z: -0.000000009834053,
+        w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: J_R_Mune_00
       parentName: 
@@ -8338,7 +8338,8 @@ ModelImporter:
     - name: J_L_SusoSide_01
       parentName: 
       position: {x: -0.09931265, y: 0.009805202, z: 0.001569281}
-      rotation: {x: 0.000000016659785, y: -0.000000028565852, z: 0.000000027731508, w: 1}
+      rotation: {x: 0.000000016659785, y: -0.000000028565852, z: 0.000000027731508,
+        w: 1}
       scale: {x: 1, y: 0.9999998, z: 0.9999996}
     - name: J_R_SusoSide_00
       parentName: 
@@ -8348,7 +8349,8 @@ ModelImporter:
     - name: J_R_SusoSide_01
       parentName: 
       position: {x: 0.09931244, y: -0.009805471, z: -0.0015692924}
-      rotation: {x: -0.00000002408444, y: -0.000000034021966, z: -0.000000055282847, w: 1}
+      rotation: {x: -0.00000002408444, y: -0.000000034021966, z: -0.000000055282847,
+        w: 1}
       scale: {x: 1.0000011, y: 0.99999857, z: 0.9999993}
     - name: J_L_Skirt_00
       parentName: 
@@ -8398,7 +8400,8 @@ ModelImporter:
     - name: J_L_SusoBack_01
       parentName: 
       position: {x: -0.1020692, y: -0.000000070437146, z: -0.00000005044108}
-      rotation: {x: 0.000000016775186, y: -0.0000000022441335, z: 0.0000000016642916, w: 1}
+      rotation: {x: 0.000000016775186, y: -0.0000000022441335, z: 0.0000000016642916,
+        w: 1}
       scale: {x: 1.0000001, y: 1, z: 0.9999998}
     - name: J_R_Skirt_00
       parentName: 
@@ -8448,7 +8451,8 @@ ModelImporter:
     - name: J_R_SusoBack_01
       parentName: 
       position: {x: 0.1020691, y: 0.0000000040235992, z: -0.000000032059944}
-      rotation: {x: -0.0000000016553476, y: 0.00000000909951, z: 0.000000016786105, w: 1}
+      rotation: {x: -0.0000000016553476, y: 0.00000000909951, z: 0.000000016786105,
+        w: 1}
       scale: {x: 1.0000001, y: 0.99999994, z: 0.99999994}
     - name: mesh_root
       parentName: 

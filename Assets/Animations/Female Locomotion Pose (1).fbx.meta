@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ed2471b2bbff647409fb9678135d6f88
+guid: a14f2c06d0be6784db666753da7891cf
 ModelImporter:
   serializedVersion: 21202
   internalIDToNameTable:
@@ -42,14 +42,14 @@ ModelImporter:
       firstFrame: 0
       lastFrame: 1
       wrapMode: 0
-      orientationOffsetY: -30
+      orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
@@ -553,13 +553,13 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: Female Locomotion Pose(Clone)
+    - name: Female Locomotion Pose (1)(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Character1_Reference
-      parentName: Female Locomotion Pose(Clone)
+      parentName: Female Locomotion Pose (1)(Clone)
       position: {x: -0.17574722, y: -0.02009243, z: -0.48164627}
       rotation: {x: 0.2982623, y: 0.3395678, z: 0.010040495, w: 0.8919823}
       scale: {x: 1, y: 1, z: 1}
@@ -1304,7 +1304,7 @@ ModelImporter:
       rotation: {x: 2.3283059e-10, y: -0.0000000037252894, z: -3.3469397e-10, w: 1}
       scale: {x: 0.99999994, y: 0.99999946, z: 0.9999997}
     - name: mesh_root
-      parentName: Female Locomotion Pose(Clone)
+      parentName: Female Locomotion Pose (1)(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
@@ -1393,8 +1393,8 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
-    skeletonHasParents: 1
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3

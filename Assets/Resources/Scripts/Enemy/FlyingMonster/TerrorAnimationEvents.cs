@@ -10,7 +10,7 @@ public class TerrorAnimationEvents : MonoBehaviour
     private FlightlessMonster _flightless;
     public bool _isFlightless;
 
-    public int _damage;
+    public float _damage;
 
     private void Start()
     {
@@ -27,7 +27,7 @@ public class TerrorAnimationEvents : MonoBehaviour
         for(int i = 0; i < _cols.Length; i++)
         {
             //_cols[i].SetActive(false);
-            _cols[i].GetComponent<CapsuleCollider>().isTrigger = false;
+            _cols[i].GetComponent<Collider>().enabled = false;
         }
     }
 
@@ -41,20 +41,20 @@ public class TerrorAnimationEvents : MonoBehaviour
                 //ダメージ量をセット
                 _damage = _flying._attackInfo._damage;
                 //_cols[0].SetActive(true);
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = true;
+                _cols[0].GetComponent<Collider>().enabled = true;
             }
             else if (_flying._attackInfo._attackState == FlyingMonster.AttackState.Attack2)
             {
                 //ダメージ量をセット
                 _damage = _flying._attackInfo._damage;
                 //_cols[1].SetActive(true);
-                _cols[1].GetComponent<CapsuleCollider>().isTrigger = true;
+                _cols[1].GetComponent<Collider>().enabled = true;
 
                 //もしも攻撃時の当たり判定が３つあったら
                 if (_cols.Length == 3)
                 {
                     //_cols[2].SetActive(true);
-                    _cols[2].GetComponent<CapsuleCollider>().isTrigger = true;
+                    _cols[2].GetComponent<Collider>().enabled = true;
                 }
             }
         }
@@ -66,18 +66,18 @@ public class TerrorAnimationEvents : MonoBehaviour
                 Debug.Log("攻撃の当たり判定オン");
                 _damage = _flightless._attackInfo._damage;
                 //_cols[0].SetActive(true);
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = true;
+                _cols[0].GetComponent<Collider>().enabled = true;
             }
             else if (_flightless._attackInfo._attackState == FlightlessMonster.AttackState.Attack2)
             {
                 //ダメージ量をセット
                 _damage = _flightless._attackInfo._damage;
-                _cols[1].GetComponent<CapsuleCollider>().isTrigger = true;
+                _cols[1].GetComponent<Collider>().enabled = true;
 
                 //もしも攻撃時の当たり判定が３つあったら
                 if (_cols.Length == 3)
                 {
-                    _cols[2].GetComponent<CapsuleCollider>().isTrigger = true;
+                    _cols[2].GetComponent<Collider>().enabled = true;
                 }
             }
             else if(_flightless._attackInfo._attackState == FlightlessMonster.AttackState.Attack3)
@@ -85,7 +85,7 @@ public class TerrorAnimationEvents : MonoBehaviour
                 //ダメージ量をセット
                 Debug.Log("攻撃の当たり判定オン");
                 _damage = _flightless._attackInfo._damage;
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = true;
+                _cols[0].GetComponent<Collider>().enabled = true;
             }
         }
     }
@@ -100,18 +100,18 @@ public class TerrorAnimationEvents : MonoBehaviour
                 //ダメージ量をセット
                 _damage = _flying._attackInfo._damage;
                 //_cols[0].SetActive(false);
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = false;
+                _cols[0].GetComponent<Collider>().enabled = false;
             }
             else if (_flying._attackInfo._attackState == FlyingMonster.AttackState.Attack2)
             {
                 //ダメージ量をセット
                 _damage = _flying._attackInfo._damage;
-                _cols[1].GetComponent<CapsuleCollider>().isTrigger = false;
+                _cols[1].GetComponent<Collider>().enabled = false;
 
                 //もしも攻撃時の当たり判定が３つあったら
                 if (_cols.Length == 3)
                 {
-                    _cols[2].GetComponent<CapsuleCollider>().isTrigger = false;
+                    _cols[2].GetComponent<Collider>().enabled = false;
                 }
             }
         }
@@ -121,25 +121,25 @@ public class TerrorAnimationEvents : MonoBehaviour
             {
                 //ダメージ量をセット
                 _damage = _flightless._attackInfo._damage;
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = false;
+                _cols[0].GetComponent<Collider>().enabled = false;
             }
             else if (_flightless._attackInfo._attackState == FlightlessMonster.AttackState.Attack2)
             {
                 //ダメージ量をセット
                 _damage = _flightless._attackInfo._damage;
-                _cols[1].GetComponent<CapsuleCollider>().isTrigger = false;
+                _cols[1].GetComponent<Collider>().enabled = false;
 
                 //もしも攻撃時の当たり判定が３つあったら
                 if (_cols.Length == 3)
                 {
-                    _cols[2].GetComponent<CapsuleCollider>().isTrigger = false;
+                    _cols[2].GetComponent<Collider>().enabled = false;
                 }
             }
             else if (_flightless._attackInfo._attackState == FlightlessMonster.AttackState.Attack3)
             {
                 //ダメージ量をセット
                 Debug.Log("攻撃の当たり判定オフ");
-                _cols[0].GetComponent<CapsuleCollider>().isTrigger = false;
+                _cols[0].GetComponent<Collider>().enabled = false;
             }
         }
     }

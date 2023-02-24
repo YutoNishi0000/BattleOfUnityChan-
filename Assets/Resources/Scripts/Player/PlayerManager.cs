@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour//Photon.PunBehaviour/*, IPunObservabl
     public GameObject PlayerUiPrefab;
 
     //Œ»İ‚ÌHP
-    public int HP = 100;
+    public float HP = 100;
 
     //Local‚ÌƒvƒŒƒCƒ„[‚ğİ’è
     public static GameObject LocalPlayerInstance;

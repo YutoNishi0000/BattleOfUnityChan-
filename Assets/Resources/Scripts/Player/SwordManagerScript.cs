@@ -21,7 +21,7 @@ public class SwordManagerScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(_attackLock)
+        if(_attackLock || other.gameObject.CompareTag("EnemyCollider"))
         {
             return;
         }
@@ -35,7 +35,7 @@ public class SwordManagerScript : MonoBehaviour
         }
 
         //エフェクト生成
-        Instantiate(_swordEffect, other.gameObject.transform.position, Quaternion.identity);
+        Instantiate(_swordEffect, other.GetComponent<Collider>().transform.position, Quaternion.identity);
 
         bool counterAttack = GetComponentInParent<CharacterControlScript>()._counterCollider;
 

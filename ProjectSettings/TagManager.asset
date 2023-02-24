@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - AttackCollider
   - Ball
+  - Sword
+  - Ground
+  - EnemyCollider
   layers:
   - Default
   - TransparentFX

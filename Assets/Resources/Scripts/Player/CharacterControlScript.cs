@@ -98,6 +98,13 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     private bool rightFootGrounded;
     private bool leftFootGrounded;
 
+
+    private float x;
+    private float z;
+    public float Speed = 1.0f;
+    float smooth = 10f;
+    private Rigidbody rb;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -108,6 +115,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         _gardflag = false;
 
         Sword.GetComponent<Collider>().enabled = false;
+        rb = GetComponent<Rigidbody>();
         audioManager = GetComponent<PlayerSEController>();
         img.color = Color.clear;
         _swordMiracle.SetActive(false);
@@ -121,6 +129,8 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             return;
         }
 
+
+
         GardManager();
 
         img.color = Color.Lerp(this.img.color, Color.clear, Time.deltaTime);
@@ -130,26 +140,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             moveControl();  //移動用関数
             RotationControl(); //旋回用関数
-
-            //もしも回避ボタン(Eボタン)が押されたら
-            if (_avoidance)
-            {
-                //回避関数を実行
-                Avoidance();
-
-                //当たり判定の大きさを変更
-                DOTween.To(() => controller.height, (val) => { controller.height = val; }, 0, 0.3f);
-
-                //回避が終わった直後Eボタンを押し続けて止まって居たら初期化処理を行う
-                if (controller.velocity.magnitude <= 0)
-                {
-                    UnLockAvoidance();
-                }
-            }
-
-            //最終的な移動処理
-            //(これが無いとCharacterControllerに情報が送られないため、動けない)
-            controller.Move(moveDirection * Time.deltaTime);
         }
 
         //攻撃ロックがかかっていなければ攻撃できる
@@ -160,13 +150,26 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
     }
 
+    #region 移動、回転処理
+
     void moveControl()
     {
-        //★進行方向計算
+        if (Input.GetMouseButtonDown(1))
+        {
+            Avoidance();
+        }
+        if(_avoidance)
+        {
+            animator.SetBool("Avoid", true);
+            rb.AddForce(avoidDirection / 3, ForceMode.Impulse);
+            transform.rotation = Quaternion.LookRotation(avoidDirection);
+            return;
+        }
+
+        //進行方向計算
         //キーボード入力を取得
         float v = Input.GetAxisRaw("Vertical");         //InputManagerの↑↓の入力       
         float h = Input.GetAxisRaw("Horizontal");       //InputManagerの←→の入力 
-        //audioManager.Play("Run");
 
         //カメラの正面方向ベクトルからY成分を除き、正規化してキャラが走る方向を取得
         Vector3 forward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
@@ -175,50 +178,42 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         //カメラの方向を考慮したキャラの進行方向を計算
         targetDirection = h * right + v * forward;
 
-        //地上にいる場合の処理
-        if (controller.isGrounded)
-        {
-            //移動のベクトルを計算
-            moveDirection = targetDirection * GetDashSpeed(speed);
-
-            //Jumpボタンでジャンプ処理
-            if (Input.GetButton("Jump"))
-            {
-                moveDirection.y = jumpSpeed;
-            }
-        }
-        else        //空中操作の処理（重力加速度等）
-        {
-            float tempy = moveDirection.y;
-            //(↓の２文の処理があると空中でも入力方向に動けるようになる)
-            //moveDirection = Vector3.Scale(targetDirection, new Vector3(1, 0, 1)).normalized;
-            //moveDirection *= speed;
-            moveDirection.y = tempy - gravity * Time.deltaTime;
-        }
+        rb.velocity = targetDirection * GetDashSpeed(speed);
 
         //走行アニメーション管理
-        if (v > .1 || v < -.1 || h > .1 || h < -.1) //(移動入力があると)
+        if (rb.velocity.magnitude > 0) //(移動入力があると)
         {
             animator.SetFloat("Speed", 1f); //キャラ走行のアニメーション開始
-
-            //回避フラグがオフの状態で走行中にEボタンを押したら
-            if(!_avoidance && Input.GetKeyDown(KeyCode.E))
-            {
-                _avoidance = true;
-                avoidDirection = transform.forward;
-                audioManager.Play("Avoidance");
-            }
         }
         else    //(移動入力が無いと)
         {
             animator.SetFloat("Speed", 0); //キャラ走行のアニメーション終了
+        }
+
+    }
+
+    /// <summary>
+    /// プレイヤーの回転処理
+    /// </summary>
+    void RotationControl()  //キャラクターが移動方向を変えるときの処理
+    {
+        Vector3 rotateDirection = targetDirection;
+        rotateDirection.y = 0;
+
+        //それなりに移動方向が変化する場合のみ移動方向を変える
+        if (rotateDirection.sqrMagnitude > 0.01)
+        {
+            //緩やかに移動方向を変える
+            float step = rotateSpeed * Time.deltaTime;
+            Vector3 newDir = Vector3.Slerp(transform.forward, rotateDirection, step);
+            transform.rotation = Quaternion.LookRotation(newDir);
         }
     }
 
     float GetDashSpeed(float speed)
     {
         //もし左シフトを押した、またはスライディング回避中であれば
-        if(Input.GetKey(KeyCode.LeftShift) || _avoidance)
+        if(Input.GetKey(KeyCode.LeftShift))
         {
             //普段のスピードの1.5倍のスピードの値を返す
             return speed * 1.5f;
@@ -230,11 +225,120 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
     }
 
+    #endregion
+
+    #region ガード処理
+
+    //
+    void GardManager()
+    {
+        if (Input.GetKeyDown(KeyCode.Q) && !Gardflag)
+        {
+            GardCounter();
+            _counterAttack = true;
+            audioManager.Play("Gard");
+
+            //0.5秒後にカウンターフラグがオフに
+            Invoke(nameof(EndCounterAttack), 3f);
+            Debug.Log("カウンター攻撃のための判定開始");
+        }
+        else if (Input.GetKeyUp(KeyCode.Q) && Gardflag)
+        {
+            UnLockGard();
+            CancelInvoke("UnLockGard");
+        }
+    }
+
+    //ガード->タイミングがあればカウンター攻撃
+    void GardCounter()
+    {
+        //フラグをオンに
+        Gardflag = true;
+
+        //各種アニメーション再生
+        animator.SetFloat("ResetGard", 0);
+        animator.SetFloat("Gard", 1);
+
+        //ガード終わり
+        Invoke(nameof(UnLockGard), 2);
+    }
+
+    void UnLockGard()
+    {
+        animator.SetFloat("ResetGard", 1);
+
+        //フラグをオフに
+        Gardflag = false;
+    }
+
+    #endregion
+
+    #region 回避処理
+
+    //回避(すぐに回避を繰り出すために値は０か1で調整)、入力管理は移動処理の中で行う、走っているときにしか繰り出せない、ボタンを押したら自動的に回避してくれるような関数を実装
+    void Avoidance()
+    {
+        avoidDirection = transform.forward;
+        audioManager.Play("Avoidance");
+        StartCoroutine(CAvoidance(0.5f));
+    }
+
+    IEnumerator CAvoidance(float time)
+    {
+        _avoidance = true;
+        yield return new WaitForSeconds(time);
+        _avoidance = false;
+        animator.SetBool("Avoid", false);
+    }
+
+    //回避が終わったときに回避に使った値などの初期化処理を行う
+    public void UnLockAvoidance()
+    {
+        animator.ResetTrigger("Avoidance");
+    }
+
+    #endregion
+
+    #region 攻撃処理
+
+    void AttackControl()
+    {
+        if (Input.GetMouseButtonDown(0) && !animator.IsInTransition(0))	//　遷移途中でない
+        {
+            //攻撃ロック開始
+            AttackLock = true;
+            //移動ロック開始
+            MoveLock = true;
+            StartCoroutine(CAttack(1f));
+            AttackSE();
+        }
+    }
+
+    IEnumerator CAttack(float pausetime)
+    {
+        animator.SetTrigger("Attack");
+        //攻撃硬直のためpausetimeだけ待つ
+        yield return new WaitForSeconds(pausetime);
+        //攻撃ロック解除
+        AttackLock = false;
+        //移動ロック解除
+        MoveLock = false;
+    }
+
+    #endregion
+
+    #region IK関連
+
     /// <summary>
     /// 顔のIKをモンスターの方向に向くように変更する
     /// </summary>
     public void OnAnimatorIK(int layerIndex)
     {
+        if(_avoidance)
+        {
+            return;
+        }
+
         //　アニメーションパラメータからIKのウエイトを取得
         rightFootWeight = animator.GetFloat("RightFootWeight");
         leftFootWeight = animator.GetFloat("LeftFootWeight");
@@ -321,7 +425,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         float angle = Vector3.Angle(direction, moveDirection);
 
         //↑で求めた角度が150度以上であれば
-        if(angle >= 150)
+        if (angle >= 150)
         {
             //ここからしたの処理は行わない
             return;
@@ -331,127 +435,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         animator.SetLookAtWeight(1.0f, 0.0f, 1f, 0.0f, 0.8f);
     }
 
-    //エネミーオブジェクトをセット
-    public void SetEnemyObject(GameObject enemyObject)
-    {
-        enemyObj = enemyObject;
-    }
-
-    //エネミーオブジェクトを取得する関数
-    public GameObject GetEnemyObject()
-    {
-        return enemyObj;
-    }
-
-    //
-    void GardManager()
-    {
-        if (Input.GetKeyDown(KeyCode.Q) && !Gardflag)
-        {
-            GardCounter();
-            _counterAttack = true;
-            audioManager.Play("Gard");
-
-            //0.5秒後にカウンターフラグがオフに
-            Invoke(nameof(EndCounterAttack), 3f);
-            Debug.Log("カウンター攻撃のための判定開始");
-        }
-        else if (Input.GetKeyUp(KeyCode.Q) && Gardflag)
-        {
-            UnLockGard();
-            CancelInvoke("UnLockGard");
-        }
-    }
-
-    //ガード->タイミングがあればカウンター攻撃
-    void GardCounter()
-    {
-        //フラグをオンに
-        Gardflag = true;
-
-        //各種アニメーション再生
-        animator.SetFloat("ResetGard", 0);
-        animator.SetFloat("Gard", 1);
-
-        //ガード終わり
-        Invoke(nameof(UnLockGard), 2);
-    }
-
-    void UnLockGard()
-    {
-        animator.SetFloat("ResetGard", 1);
-
-        //フラグをオフに
-        Gardflag = false;
-    }
-
-    //回避を行う関数を実際に実行する関数
-    void AvoidanceManager()
-    {
-        //同期を行う
-        //myPV.RPC("Avoidance", PhotonTargets.AllViaServer);
-    }
-
-    //回避(すぐに回避を繰り出すために値は０か1で調整)、入力管理は移動処理の中で行う、走っているときにしか繰り出せない、ボタンを押したら自動的に回避してくれるような関数を実装
-    void Avoidance()
-    {
-        animator.SetFloat("ResetAvoidance", 0);
-        animator.SetFloat("Avoidance", 1);
-
-        //一秒後に回避解除したい
-        Invoke(nameof(UnLockAvoidance), 0.6f);
-    }
-
-    //回避が終わったときに回避に使った値などの初期化処理を行う
-    void UnLockAvoidance()
-    {
-        //回避解除
-        animator.SetFloat("ResetAvoidance", 1);
-        _avoidance = false;
-        //引数はラムダ式を使って変数を設定
-        DOTween.To(() => controller.height, (val) => { controller.height = val; }, 1.9f, 1f);
-    }
-
-    void RotationControl()  //キャラクターが移動方向を変えるときの処理
-    {
-        Vector3 rotateDirection = moveDirection;
-        rotateDirection.y = 0;
-
-        //それなりに移動方向が変化する場合のみ移動方向を変える
-        if (rotateDirection.sqrMagnitude > 0.01)
-        {
-            //緩やかに移動方向を変える
-            float step = rotateSpeed * Time.deltaTime;
-            Vector3 newDir = Vector3.Slerp(transform.forward, rotateDirection, step);
-            transform.rotation = Quaternion.LookRotation(newDir);
-        }
-    }
-
-    void AttackControl()
-    {
-        if (Input.GetMouseButtonDown(0) && !animator.IsInTransition(0))	//　遷移途中でない
-        {
-            //攻撃ロック開始
-            AttackLock = true;
-            //移動ロック開始
-            MoveLock = true;
-            StartCoroutine(_ballattack(1f));
-            AttackSE();
-        }
-    }
-
-    IEnumerator _ballattack(float pausetime)
-    {
-        //RPCでボール生成
-        //myPV.RPC("BallInst", PhotonTargets.AllViaServer, transform.position + transform.up, transform.rotation);
-        animator.SetTrigger("Attack");
-        //攻撃硬直のためpausetimeだけ待つ
-        yield return new WaitForSeconds(pausetime);
-        //攻撃ロック解除
-        AttackLock = false;
-        //移動ロック解除
-        MoveLock = false;
-    }
+    #endregion
 
     #region 被弾関連処理
 
@@ -514,7 +498,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         MoveLock = false;   //移動ロック解除
     }
 
-    public void Damage(int damage)
+    public void Damage(float damage)
     {
         //回避時は無敵
         if (_avoidance)
@@ -699,13 +683,29 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     }
 
     #endregion
+
+    #region ゲッター　セッター
+
+    //エネミーオブジェクトをセット
+    public void SetEnemyObject(GameObject enemyObject)
+    {
+        enemyObj = enemyObject;
+    }
+
+    //エネミーオブジェクトを取得する関数
+    public GameObject GetEnemyObject()
+    {
+        return enemyObj;
+    }
+
+    #endregion
 }
 
 //ダメージ処理インターフェイス
 interface IDamage
 {
     //ダメージ処理
-    public void Damage(int damage);
+    public void Damage(float damage);
 
     public void ShakeUI();
 }

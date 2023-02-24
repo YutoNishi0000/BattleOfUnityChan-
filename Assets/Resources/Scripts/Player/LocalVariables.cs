@@ -5,7 +5,7 @@ using UnityEngine;
 public class LocalVariables : MonoBehaviour
 {
     //åªç›ÇÃHP
-    static public int currentHP = 3000;
+    static public float currentHP = 3000;
 
     // Use this for initialization
     void Start()

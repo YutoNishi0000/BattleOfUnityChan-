@@ -104,6 +104,11 @@ public class LastMonsterController : EnemyController, IMonsterDamageable
 
     private void Update()
     {
+        if(_endScream)
+        {
+            _navMeshAgent.destination = Instance.gameObject.transform.position;
+        }
+
         if (_isDead)
         {
             return;
@@ -208,18 +213,9 @@ public class LastMonsterController : EnemyController, IMonsterDamageable
     public override void Attack()
     {
         //ゲーム開始時3秒は攻撃を行わない->吠えた後すぐに攻撃してしまうのを防ぐため
-        if (_endScream)
+        if (!_endScream)
         {
-            _sec += Time.deltaTime;
-
-            if (_sec < 3)
-            {
-                return;
-            }
-            else
-            {
-                _sec = 3;
-            }
+            return;
         }
 
         //クールタイムが終わっていてゲーム開始時吠え終わっていてかつ移動していなければ

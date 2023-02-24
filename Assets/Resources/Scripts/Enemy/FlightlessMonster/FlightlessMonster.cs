@@ -18,12 +18,18 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         Attack3        //角
     }
 
+    public enum EnemyState
+    {
+        NOMAL_STATE,
+        ANGRY_STATE
+    }
+
     private Animator _anim;
     private Monster _monster;
     public bool _endAttack;
     public bool _endScream;
     public NavMeshAgent _navMeshAgent;
-    public bool _isMove;
+    public bool _isMove;  //いらない
     public bool _moveLock;
     private float _sec;
     public SABoneCollider[] _cols;
@@ -35,13 +41,17 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     public Transform _effectPos;
     private AudioSource _audioSource;
     [SerializeField] private AudioClip[] _audioClip;
+    private bool _attackLock;     //攻撃を制限するフラグ
+    [SerializeField] private Material _nomalStateShader;
+    [SerializeField] private Material _angryStateShader;
 
-    [SerializeField] private int ENEMY_HP = 5000;
+    [SerializeField] private float ENEMY_HP = 5000;
+    private bool _onceScream;
 
     public struct AttackInfo
     {
         public AttackState _attackState;
-        public int _damage;
+        public float _damage;
 
         public AttackInfo(AttackState attackState, int damege)
         {
@@ -52,6 +62,7 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
 
 
     public AttackInfo _attackInfo;
+    public EnemyState _enemyState;
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +72,7 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         _audioSource = GetComponent<AudioSource>();
 
         _monster = new Monster();
+        _enemyState = new EnemyState();
 
         ENEMY_HP = 1000;
 
@@ -70,6 +82,8 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         _isMove = true;
         _moveLock = false;
         _isDead = false;
+        _attackLock = true;
+        _onceScream = false;
 
         //技をセット
         _monster.Waza1 = new Scream();
@@ -79,7 +93,7 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
 
         _monster.Attack(_monster.Waza1, _anim);
 
-        for(int i = 0; i < _cols.Length; i++)
+        for (int i = 0; i < _cols.Length; i++)
         {
             _cols[i].enabled = false;
             Debug.Log("攻撃の当たり判定を初期化");
@@ -92,6 +106,8 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     // Update is called once per frame
     void Update()
     {
+        StateManager(ENEMY_HP);
+
         if (_isDead)
         {
             return;
@@ -99,6 +115,11 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
 
         Attack();
         Move();
+
+        if (_endScream)
+        {
+            _navMeshAgent.destination = Instance.gameObject.transform.position;
+        }
     }
 
     #region 移動処理
@@ -112,15 +133,6 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         if (_endScream)
         {
             _anim.SetFloat("Run", _navMeshAgent.velocity.magnitude);
-
-            if (_navMeshAgent.velocity.magnitude < 0.0001f)
-            {
-                _isMove = false;
-            }
-            else
-            {
-                _isMove = true;
-            }
         }
     }
 
@@ -133,52 +145,89 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     /// </summary>
     public override void Attack()
     {
-        if (_endScream)
+        //クールタイムが終わっていてゲーム開始時吠え終わっていてかつ移動していなければ
+        if (!_endAttack && _endScream && !_attackLock)
         {
-            _sec += Time.deltaTime;
+            switch (GetEnemyState())
+            {
+                case EnemyState.NOMAL_STATE:
+                    //攻撃方法はノーマル、角アタックのみでダメージ倍率１倍
+                    State_Attack((AttackState)Random.Range(0, 2), 1);
+                    break;
 
-            if (_sec < 3)
-            {
-                return;
-            }
-            else
-            {
-                _sec = 3;
+                case EnemyState.ANGRY_STATE:
+                    //攻撃方法はノーマル、角、爪アタックでダメージ倍率２倍
+                    State_Attack((AttackState)Random.Range(0, 3), 2);
+                    break;
             }
         }
+    }
 
-        //クールタイムが終わっていてゲーム開始時吠え終わっていてかつ移動していなければ
-        if (!_endAttack && _endScream && !_isMove)
+    void State_Attack(AttackState attackState, float damageMultiplier)
+    {
+        //ランダムに一つだけ攻撃の種類を取得
+        _attackInfo._attackState = attackState;
+
+        //一つだけ取得した攻撃の種類が
+        switch (_attackInfo._attackState)
         {
-            //ランダムに一つだけ攻撃の種類を取得
-            _attackInfo._attackState = (AttackState)Random.Range(0, 3);
+            //ノーマルであればノーマルアタックを発動
+            case AttackState.Attack1:
+                _monster.Attack(_monster.Waza2, _anim);
+                //クールタイム発生
+                CoolTimeManager(_monster.Waza2);
+                _attackInfo._damage = _monster.Waza2._damage * damageMultiplier;
+                break;
 
-            //一つだけ取得した攻撃の種類が
-            switch(_attackInfo._attackState)
+            //爪であれば角アタックを発動
+            case AttackState.Attack2:
+                _monster.Attack(_monster.Waza4, _anim);
+                //クールタイム発生
+                CoolTimeManager(_monster.Waza4);
+                _attackInfo._damage = _monster.Waza4._damage * damageMultiplier;
+                break;
+
+            //角であれば爪アタックを発動
+            case AttackState.Attack3:
+                _monster.Attack(_monster.Waza3, _anim);
+                //クールタイム発生
+                CoolTimeManager(_monster.Waza3);
+                _attackInfo._damage = _monster.Waza3._damage * damageMultiplier;
+                break;
+        }
+    }
+
+    void AttackLock()
+    {
+        _attackLock = false;
+    }
+
+    #endregion
+
+    #region ステート管理
+
+    void StateManager(float EnemyHP)
+    {
+        if (EnemyHP > 300)
+        {
+            _enemyState = EnemyState.NOMAL_STATE;
+
+            //マテリアルはノーマル
+            GetComponentInChildren<SkinnedMeshRenderer>().material = _nomalStateShader;
+        }
+        else
+        {
+            _enemyState = EnemyState.ANGRY_STATE;
+
+            //ステートが変わったときにマテリアルを変更
+            GetComponentInChildren<SkinnedMeshRenderer>().material = _angryStateShader;
+
+            if (!_onceScream)
             {
-                //ノーマルであればノーマルアタックを発動
-                case AttackState.Attack1:
-                    _monster.Attack(_monster.Waza2, _anim);
-                    //クールタイム発生
-                    CoolTimeManager(_monster.Waza2);
-                    _attackInfo._damage = _monster.Waza2._damage;
-                    break;
-
-                //爪であれば爪アタックを発動
-                case AttackState.Attack2:
-                    _monster.Attack(_monster.Waza3, _anim);
-                    //クールタイム発生
-                    CoolTimeManager(_monster.Waza3);
-                    _attackInfo._damage = _monster.Waza3._damage;
-                    break;
-
-                //角であれば角アタックを発動
-                case AttackState.Attack3:
-                    _monster.Attack(_monster.Waza4, _anim);
-                    //クールタイム発生
-                    CoolTimeManager(_monster.Waza4);
-                    _attackInfo._damage = _monster.Waza4._damage;
-                    break;
+                _attackLock = true;
+                _anim.Play("Scream");
+                //_anim.SetTrigger("ChangeState");
+                _onceScream = true;
             }
         }
     }
@@ -276,6 +325,8 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     public void EndScream()
     {
         _endScream = true;
+        //遠吠えが終わってから３秒後に攻撃ロックを解除する
+        Invoke(nameof(AttackLock), 3);
     }
 
     //被弾モーションが終わったときに呼び出す関数
@@ -289,6 +340,19 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     {
         CreateParticleSystem2(_earthExplosion, _effectPos.position, transform.rotation, 3);
     }
+
+    #endregion
+
+    #region ゲッター、セッター
+
+    public EnemyState GetEnemyState()
+    {
+        return _enemyState;
+    }
+
+    #endregion
+
+    #region その他
 
     #endregion
 }

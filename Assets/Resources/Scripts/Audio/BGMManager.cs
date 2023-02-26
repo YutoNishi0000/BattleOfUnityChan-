@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BGMManager : MonoBehaviour
+public class BGMManager : Actor
 {
     public AudioClip[] _audioObjects;
 
@@ -19,6 +19,16 @@ public class BGMManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        switch(GameSystem.Instance.GetGameState())
+        {
+            case GameSystem.GameState.GameClear:
+                _audioSource.Stop();
+                break;
+            case GameSystem.GameState.GameOver:
+                _audioSource.Stop();
+                break;
+        }
+
         switch (GameSystem.DeathMonsterNum)
         {
             case 0:

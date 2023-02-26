@@ -106,6 +106,11 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     // Update is called once per frame
     void Update()
     {
+        if(GameSystem.Instance.GetGameState() != GameSystem.GameState.Battle)
+        {
+            _audioSource.Stop();
+        }
+
         StateManager(ENEMY_HP);
 
         if (_isDead)

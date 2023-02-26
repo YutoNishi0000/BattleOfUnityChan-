@@ -111,6 +111,11 @@ public class LastMonster : EnemyController, IMonsterDamageable
 
     private void Update()
     {
+        if (GameSystem.Instance.GetGameState() != GameSystem.GameState.Battle)
+        {
+            _audioSource.Stop();
+        }
+
         StateManager(ENEMY_HP);
 
         if (_isDead)
@@ -419,12 +424,10 @@ public class LastMonster : EnemyController, IMonsterDamageable
 
         if (GameSystem.DeathMonsterNum >= 4)
         {
+            gameObject.SetActive(false);
+            GameSystem.Instance.SetGameState(GameSystem.GameState.GameClear);
             return;
         }
-
-        gameSystem.GenerateMonster(GameSystem.DeathMonsterNum);
-        //Destroy(gameObject);
-        gameObject.SetActive(false);
     }
 
     #endregion

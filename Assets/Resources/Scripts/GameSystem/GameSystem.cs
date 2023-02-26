@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.UI;
 
 public class GameSystem : MonoBehaviour
 {
@@ -35,44 +36,73 @@ public class GameSystem : MonoBehaviour
 
     public CameraShakeController _shake;
 
+    public enum GameState
+    {
+        Battle, 
+        GameClear,
+        GameOver
+    }
+
+    public GameState _state;
+
+    public Text _gameClear;
+    public Text _gameOver;
+    public GameObject _button;
+
     // Start is called before the first frame update
     void Start()
     {
-        ////全てのモンスターUIを初期化
-        //for(int i = 0; i < _monstersUI.Length; i++)
-        //{
-        //    _monstersUI[i].SetActive(false);
-        //}
         _shake = GetComponent<CameraShakeController>();
+        _state = new GameState();
 
         DeathMonsterNum = 0;
         GenerateMonster(DeathMonsterNum);
+
+        _gameClear.enabled = false;
+        _gameOver.enabled = false;
+        _button.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        switch(_state)
+        {
+            //ゲームクリアだったら
+            case GameState.GameClear:
+                Cursor.lockState = CursorLockMode.None;
+                _gameClear.enabled = true;
+                _button.SetActive(true);
+                break;
+            //ゲームオーバーだったら
+            case GameState.GameOver:
+                Cursor.lockState = CursorLockMode.None;
+                _gameOver.enabled = true;
+                _button.SetActive(true);
+                break;
+        }
+    }
 
+    void JudgeGameClear()
+    {
+        if(DeathMonsterNum >= 4)
+        {
+
+        }
     }
 
     public void GenerateMonster(int number)
     {
-        //for(int i = 0; i < _monstersUI.Length; i++)
-        //{
-        //    //全てのモンスターUIを調べ引数で指定された番号と同じであれば
-        //    if (i == number)
-        //    {
-        //        //指定されたモンスターUIを表示する
-        //        _monstersUI[number].SetActive(true);
-        //    }
-        //    //そうでなければ
-        //    else
-        //    {
-        //        //モンスターUIを非表示にする
-        //        _monstersUI[i].SetActive(false);
-        //    }
-        //}
-
         Instantiate(_monsters[number], transform.position, Quaternion.identity);
+    }
+
+    public void SetGameState(GameState state)
+    {
+        _state = state;
+    }
+
+    public GameState GetGameState()
+    {
+        return _state;
     }
 }

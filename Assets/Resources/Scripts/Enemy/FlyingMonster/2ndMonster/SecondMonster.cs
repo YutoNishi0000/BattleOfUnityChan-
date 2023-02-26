@@ -98,6 +98,11 @@ public class SecondMonster : EnemyController, IMonsterDamageable
 
     private void Update()
     {
+        if (GameSystem.Instance.GetGameState() != GameSystem.GameState.Battle)
+        {
+            _audioSource.Stop();
+        }
+
         StateManager(ENEMY_HP);
 
         if (_isDead)

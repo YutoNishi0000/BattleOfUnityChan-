@@ -126,7 +126,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        if(_finishLock)
+        if(_finishLock || Deadflag)
         {
             return;
         }
@@ -515,7 +515,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     public void Damage(float damage)
     {
         //‰ñ”ðŽž‚Í–³“G
-        if (_avoidance)
+        if (_avoidance || Deadflag)
         {
             return;
         }
@@ -529,7 +529,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if (LocalVariables.currentHP <= 0)
         {
             Dead();
-            audioManager.Play("GAMEOVER");
         }
         else
         {
@@ -543,29 +542,12 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //Ž€–Sˆ—“¯Šú—pRPC
     void Dead()
     {
-        if(Deadflag)
-        {
-            return;
-        }
-
-        Deadflag = true;    //Ž€–Sƒtƒ‰ƒOON
         AttackLock = true;  //UŒ‚ƒƒbƒNON
         MoveLock = true;    //ˆÚ“®ƒƒbƒNON
+        Deadflag = true;
         animator.SetTrigger("DeathTrigger");    //Ž€–SƒAƒjƒ[ƒVƒ‡ƒ“ON
-    }
-
-    //•œŠˆƒRƒ‹[ƒ`ƒ“
-    IEnumerator _revive(float pausetime)
-    {
-        yield return new WaitForSeconds(pausetime); //“|‚ê‚Ä‚¢‚éŽžŠÔ
-        //•œŠˆ
-        Deadflag = false;   //Ž€–S‰ðœ
-        AttackLock = false; //UŒ‚ƒƒbƒN‰ðœ
-        MoveLock = false;   //ˆÚ“®ƒƒbƒN‰ðœ
-        invincible = true;  //Ž€–SŒã–³“GŠJŽn
-        LocalVariables.currentHP = 100; //HP‰ñ•œ
-        yield return new WaitForSeconds(5f);    //Ž€–SŒã–³“GŽžŠÔ
-        invincible = false; //–³“G‰ðœ
+        audioManager.Play("GAMEOVER");
+        GameSystem.Instance.SetGameState(GameSystem.GameState.GameOver);
     }
 
     public void ShakeUI()
@@ -638,6 +620,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if(GameSystem.DeathMonsterNum == 4)
         {
             animator.SetTrigger("GAMECLEAR");
+            GameSystem.Instance.SetGameState(GameSystem.GameState.GameClear);
             _finishLock = true;
         }
     }

@@ -4636,7 +4636,7 @@ GameObject:
   - component: {fileID: 4825948614923682}
   - component: {fileID: 198345217066185332}
   - component: {fileID: 199528594520767084}
-  - component: {fileID: 5088629703690912083}
+  - component: {fileID: -4080739795353691207}
   m_Layer: 0
   m_Name: EarthShatter
   m_TagString: AttackCollider
@@ -9524,7 +9524,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &5088629703690912083
+--- !u!114 &-4080739795353691207
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9533,7 +9533,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1314945738539566}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d62eb8f26a334a4aa1560917640c86a, type: 3}
+  m_Script: {fileID: 11500000, guid: 070bc8970b2c19b42b16d00d16caadfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1584802242839310

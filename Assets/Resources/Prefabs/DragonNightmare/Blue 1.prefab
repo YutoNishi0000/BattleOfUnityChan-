@@ -8567,10 +8567,10 @@ GameObject:
   - component: {fileID: 9587272}
   - component: {fileID: -6006422060702297180}
   - component: {fileID: 1383902276512918496}
-  - component: {fileID: 1549870580013081386}
   - component: {fileID: 8376527940630015264}
   - component: {fileID: 8644626034756906694}
   - component: {fileID: 3523300846160823669}
+  - component: {fileID: 7119784707813408669}
   m_Layer: 0
   m_Name: Blue 1
   m_TagString: Enemy
@@ -8669,23 +8669,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1549870580013081386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 193776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d26a6bd7ec8f83458706adeb3522279, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cols:
-  - {fileID: 4081884477723914250}
-  - {fileID: 4081884477723914250}
-  _isFlightless: 1
-  _damage: 0
 --- !u!82 &8376527940630015264
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8851,6 +8834,21 @@ MonoBehaviour:
       isCreate: 1
       viewAdvanced: 0
     modifyNameEnabled: 0
+--- !u!114 &7119784707813408669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 193776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd4194aee0128c74f8bce1aaef7dbf01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _col: {fileID: 4081884477723914250}
+  _isFlightless: 0
+  _damage: 0
 --- !u!1 &194148
 GameObject:
   m_ObjectHideFlags: 0
@@ -12046,7 +12044,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2867277462267281864}
   - component: {fileID: 1934309382497076846}
-  - component: {fileID: 7668230781187067208}
+  - component: {fileID: 3736497375073450895}
   m_Layer: 0
   m_Name: Collision
   m_TagString: EnemyCollider
@@ -12082,7 +12080,7 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 4.13
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7668230781187067208
+--- !u!114 &3736497375073450895
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12091,7 +12089,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4081884477723914250}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d62eb8f26a334a4aa1560917640c86a, type: 3}
+  m_Script: {fileID: 11500000, guid: 070bc8970b2c19b42b16d00d16caadfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4107955736682444579

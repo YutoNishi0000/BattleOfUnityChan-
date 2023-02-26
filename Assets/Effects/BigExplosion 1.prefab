@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 198917022394846920}
   - component: {fileID: 199630755385234010}
   - component: {fileID: 5990431594484520872}
-  - component: {fileID: 8235143792704021928}
+  - component: {fileID: 7423122846438184738}
   m_Layer: 0
   m_Name: BigExplosion 1
   m_TagString: AttackCollider
@@ -3713,9 +3713,9 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 4
-    type: 0
+    type: 1
     collisionMode: 0
     colliderForce: 0
     multiplyColliderForceByParticleSize: 0
@@ -3896,11 +3896,11 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 2
     inside: 1
     outside: 0
@@ -4937,7 +4937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39156126c1685bd4caf0ad9c987e4f46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8235143792704021928
+--- !u!114 &7423122846438184738
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4946,7 +4946,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1121192042590650}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d62eb8f26a334a4aa1560917640c86a, type: 3}
+  m_Script: {fileID: 11500000, guid: 57a6e58090272c8438662873f64144d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1123476242953952

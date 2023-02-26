@@ -4745,8 +4745,7 @@ GameObject:
   - component: {fileID: 4288416149911810}
   - component: {fileID: 198679442476388764}
   - component: {fileID: 199266017805695016}
-  - component: {fileID: 3241836577850308905}
-  - component: {fileID: 966957550050849279}
+  - component: {fileID: 5785752996587627047}
   m_Layer: 0
   m_Name: WildFire 1
   m_TagString: AttackCollider
@@ -9562,7 +9561,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &3241836577850308905
+--- !u!114 &5785752996587627047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9571,19 +9570,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1956197547661106}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39156126c1685bd4caf0ad9c987e4f46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &966957550050849279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956197547661106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d62eb8f26a334a4aa1560917640c86a, type: 3}
+  m_Script: {fileID: 11500000, guid: 57a6e58090272c8438662873f64144d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1982324152055030

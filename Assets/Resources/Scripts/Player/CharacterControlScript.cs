@@ -46,6 +46,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //bool _counterFlag;
     bool _finishLock;
     bool _gardflag;
+    bool _damageReaction;
     // 画面を赤にするためのイメージ
     public Image img;
     [SerializeField] private GameObject _swordMiracle;   //剣の軌跡エフェクト
@@ -113,6 +114,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         //_counterFlag = false;
         _finishLock = false;
         _gardflag = false;
+        _damageReaction = false;
 
         Sword.GetComponent<Collider>().enabled = false;
         rb = GetComponent<Rigidbody>();
@@ -488,7 +490,19 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
 
         MoveLock = true;    //硬直のため移動ロックON
-        animator.SetTrigger("DamagedTrigger");  //ダメージアニメーション
+
+        if (_damageReaction)
+        {
+            animator.SetTrigger("DamagedTrigger");  //ダメージアニメーション
+            DamageSE();
+        }
+    }
+
+    IEnumerator DamageReaction(float time)
+    {
+        _damageReaction = false;
+        yield return new WaitForSeconds(time);
+        _damageReaction = true;
     }
 
     //ヒット時硬直処理
@@ -506,13 +520,13 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             return;
         }
 
-        // *画面を赤塗りにする
+        //画面を赤塗りにする
         img.color = new Color(0.5f, 0f, 0f, 0.5f);
         LocalVariables.currentHP -= damage;
         _bulkHPBar.value = LocalVariables.currentHP;
         _HPBar.DOValue(LocalVariables.currentHP, 0.5f);
 
-        if(LocalVariables.currentHP <= 0)
+        if (LocalVariables.currentHP <= 0)
         {
             Dead();
             audioManager.Play("GAMEOVER");
@@ -521,8 +535,8 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             //ガード時HPは減るけど、被弾モーションはしない
             Damaged();
+            StartCoroutine(DamageReaction(1));
             StartCoroutine(_rigor(.5f));    //被弾硬直処理
-            DamageSE();
         }
     }
 

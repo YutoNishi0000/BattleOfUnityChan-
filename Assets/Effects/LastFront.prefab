@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4584431484625042}
   - component: {fileID: 198637950067575458}
   - component: {fileID: 199982541912562440}
-  - component: {fileID: 1296315749834844956}
   - component: {fileID: 6662165317943985303}
   m_Layer: 0
   m_Name: LastFront
@@ -27,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634767862067424}
-  m_LocalRotation: {x: 0.5624222, y: 0.3036032, z: -0.23296289, w: 0.73296297}
+  m_LocalRotation: {x: 0.46193978, y: 0.33141357, z: -0.19134171, w: 0.8001032}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 30, y: 30, z: 30}
   m_ConstrainProportionsScale: 0
@@ -36,7 +35,7 @@ Transform:
   - {fileID: 4691803356102260}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 75, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 45, z: 0}
 --- !u!198 &198637950067575458
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -3625,7 +3624,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     type: 1
     collisionMode: 0
@@ -4837,18 +4836,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &1296315749834844956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1634767862067424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39156126c1685bd4caf0ad9c987e4f46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6662165317943985303
 MonoBehaviour:
   m_ObjectHideFlags: 0

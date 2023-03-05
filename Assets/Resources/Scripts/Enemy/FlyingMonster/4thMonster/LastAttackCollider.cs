@@ -43,7 +43,6 @@ public class LastAttackCollider : MonoBehaviour
 
     public void StartFlyingAttack()
     {
-        Debug.Log("yobaretatatatatatataatatatatatatatatata");
         switch (GetComponent<LastEffects>().GetSide())
         {
             case 0:

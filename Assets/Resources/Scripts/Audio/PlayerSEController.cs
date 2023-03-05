@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerSEController : MonoBehaviour
 {
-    [SerializeField]
-    AudioClip[] audioClips;
+    [SerializeField] AudioClip[] audioClips;
 
     AudioSource audioSource;
 

@@ -52,6 +52,7 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
     [SerializeField] private Material _ground;   //フィールドのマテリアル
     private GameObject _fireOutRegion;            //炎をフィールドに表示させる
     private GameObject _fireInRegion;            //炎をフィールドに表示させる
+    private GameObject _effectPos;            //炎をフィールドに表示させる
 
     public struct AttackInfo
     {
@@ -104,8 +105,9 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
         //自身のオブジェクトをセット
         Instance.SetEnemyObject(this.gameObject);
 
-        _fireOutRegion = GameObject.Find("FireResionOutSide");
-        _fireInRegion = GameObject.Find("FireResionInSide");
+        _effectPos = GameObject.Find("ThirdEffectPos");
+        _fireOutRegion = _effectPos.transform.Find("FireResionOutSide").gameObject;
+        _fireInRegion = _effectPos.transform.Find("FireResionInSide").gameObject;
 
         for (int i = 0; i < 2; i++)
         {
@@ -263,7 +265,6 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
         //クールタイムが終わっていてゲーム開始時吠え終わっていてかつ移動していなければ
         if (!_endAttack && _endScream && !_attackLock)
         {
-            Debug.Log("うううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううううう");
             switch (GetEnemyState())
             {
                 case EnemyState.NOMAL_STATE:
@@ -425,7 +426,6 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
 
     public void StartScream()
     {
-        GameSystem.Instance._shake.Shake(3, 0.1f, 1);
         _audioSource.PlayOneShot(_audioClip[0]);
     }
 

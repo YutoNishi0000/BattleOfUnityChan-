@@ -28,13 +28,9 @@ public class GameSystem : MonoBehaviour
 
     public GameObject[] _monsters;
 
-    public GameObject[] _monstersUI;
-
     public static int DeathMonsterNum;    //倒したモンスターの数
 
     public bool _instantiateLock;    //モンスターの生成をロックするためのフラグ
-
-    public CameraShakeController _shake;
 
     public enum GameState
     {
@@ -45,42 +41,19 @@ public class GameSystem : MonoBehaviour
 
     public GameState _state;
 
-    public Text _gameClear;
-    public Text _gameOver;
-    public GameObject _button;
-
     // Start is called before the first frame update
     void Start()
     {
-        _shake = GetComponent<CameraShakeController>();
         _state = new GameState();
 
         DeathMonsterNum = 0;
         GenerateMonster(DeathMonsterNum);
-
-        _gameClear.enabled = false;
-        _gameOver.enabled = false;
-        _button.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch(_state)
-        {
-            //ゲームクリアだったら
-            case GameState.GameClear:
-                Cursor.lockState = CursorLockMode.None;
-                _gameClear.enabled = true;
-                _button.SetActive(true);
-                break;
-            //ゲームオーバーだったら
-            case GameState.GameOver:
-                Cursor.lockState = CursorLockMode.None;
-                _gameOver.enabled = true;
-                _button.SetActive(true);
-                break;
-        }
+
     }
 
     void JudgeGameClear()

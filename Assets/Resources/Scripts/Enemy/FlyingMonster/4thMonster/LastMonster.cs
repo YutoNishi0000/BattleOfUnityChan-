@@ -436,7 +436,6 @@ public class LastMonster : EnemyController, IMonsterDamageable
 
     public void StartScream()
     {
-        GameSystem.Instance._shake.Shake(3f, 4f, 1);
         _audioSource.PlayOneShot(_audioClip[0]);
     }
 

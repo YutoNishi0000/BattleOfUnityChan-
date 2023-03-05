@@ -131,10 +131,9 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             return;
         }
 
-
-
         GardManager();
 
+        //常にパネルのアルファ値を0にしておく
         img.color = Color.Lerp(this.img.color, Color.clear, Time.deltaTime);
 
         //移動ロックONまたは死亡フラグONであれば移動、攻撃をさせない

@@ -12047,7 +12047,7 @@ GameObject:
   - component: {fileID: 3736497375073450895}
   m_Layer: 0
   m_Name: Collision
-  m_TagString: EnemyCollider
+  m_TagString: AttackCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

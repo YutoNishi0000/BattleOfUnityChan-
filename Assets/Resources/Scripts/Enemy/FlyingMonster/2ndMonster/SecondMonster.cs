@@ -380,7 +380,6 @@ public class SecondMonster : EnemyController, IMonsterDamageable
 
     public void StartScream()
     {
-        GameSystem.Instance._shake.Shake(3, 0.1f, 1);
         _audioSource.PlayOneShot(_audioClip[0]);
     }
 

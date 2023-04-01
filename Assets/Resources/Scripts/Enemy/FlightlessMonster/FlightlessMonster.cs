@@ -10,58 +10,28 @@ using UnityEngine.UI;
 //飛べないドラゴンを制御するクラス
 public class FlightlessMonster : EnemyController, IMonsterDamageable
 {
-    //攻撃方法
-    public enum AttackState
-    {
-        Attack1,      //ノーマル
-        Attack2,       //爪
-        Attack3        //角
-    }
-
-    public enum EnemyState
-    {
-        NOMAL_STATE,
-        ANGRY_STATE
-    }
-
     private Animator _anim;
     private Monster _monster;
-    public bool _endAttack;
-    public bool _endScream;
-    public NavMeshAgent _navMeshAgent;
-    public bool _isMove;  //いらない
-    public bool _moveLock;
-    private float _sec;
-    public SABoneCollider[] _cols;
-    private bool _isDead;
-    private float MATERIAL_ALPHA = 1;
-    public Slider _HPBar;
-    public Slider _BulkHPBar;
-    public ParticleSystem _earthExplosion;
-    public Transform _effectPos;
+    private NavMeshAgent _navMeshAgent;
     private AudioSource _audioSource;
-    [SerializeField] private AudioClip[] _audioClip;
+    public AttackInfo _attackInfo;
+    private bool _endAttack;
+    private bool _endScream;
+    private bool _moveLock;
     private bool _attackLock;     //攻撃を制限するフラグ
+    private bool _isDead;
+    private bool _onceScream;
+    private float _sec;
+    [SerializeField] private Slider _HPBar;
+    [SerializeField] private Slider _BulkHPBar;
+    [SerializeField] private ParticleSystem _earthExplosion;
+    [SerializeField] private Transform _effectPos;
+    [SerializeField] private AudioClip[] _audioClip;
     [SerializeField] private Material _nomalStateShader;
     [SerializeField] private Material _angryStateShader;
-
     [SerializeField] private float ENEMY_HP = 5000;
-    private bool _onceScream;
-
-    public struct AttackInfo
-    {
-        public AttackState _attackState;
-        public float _damage;
-
-        public AttackInfo(AttackState attackState, int damege)
-        {
-            _attackState = attackState;
-            _damage = damege;
-        }
-    }
 
 
-    public AttackInfo _attackInfo;
     public EnemyState _enemyState;
 
     // Start is called before the first frame update
@@ -74,12 +44,9 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         _monster = new Monster();
         _enemyState = new EnemyState();
 
-        ENEMY_HP = 1000;
-
         //各種フラグ
         _endAttack = false;
         _endScream = false;
-        _isMove = true;
         _moveLock = false;
         _isDead = false;
         _attackLock = true;
@@ -92,13 +59,6 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
         _monster.Waza4 = new HornAttack();
 
         _monster.Attack(_monster.Waza1, _anim);
-
-        for (int i = 0; i < _cols.Length; i++)
-        {
-            _cols[i].enabled = false;
-            Debug.Log("攻撃の当たり判定を初期化");
-        }
-
         //自身のオブジェクトをセット
         Instance.SetEnemyObject(this.gameObject);
     }
@@ -311,7 +271,7 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
             return;
         }
 
-        gameSystem.GenerateMonster(GameSystem.DeathMonsterNum);
+        MonsterGenerater.generater.GenerateMonster(GameSystem.DeathMonsterNum);
         //Destroy(gameObject);
         gameObject.SetActive(false);
     }
@@ -359,60 +319,4 @@ public class FlightlessMonster : EnemyController, IMonsterDamageable
     #region その他
 
     #endregion
-}
-
-//============================================================================================================
-// 技の種類
-//============================================================================================================
-
-/// <summary>
-/// 技名：ノーマルアタック ダメージ：30 クールタイム：3秒
-/// </summary>
-class Scream : Waza
-{
-    public Scream()
-    {
-        this.waza_name = "Scream";
-        this._damage = 0;
-        this._coolTime = 3;
-    }
-}
-
-/// <summary>
-/// 技名：ノーマルアタック ダメージ：30 クールタイム：4秒
-/// </summary>
-class NomalAttack : Waza
-{
-    public NomalAttack()
-    {
-        this.waza_name = "NomalAttack";
-        this._damage = 30;
-        this._coolTime = 4;
-    }
-}
-
-/// <summary>
-/// 技名：爪アタック ダメージ：50 クールタイム：5秒
-/// </summary>
-class ClawAttack : Waza
-{
-    public ClawAttack()
-    {
-        this.waza_name = "ClawAttack";
-        this._damage = 50;
-        this._coolTime = 5;
-    }
-}
-
-/// <summary>
-/// 技名：角アタック ダメージ：60 クールタイム：5秒
-/// </summary>
-class HornAttack : Waza
-{
-    public HornAttack()
-    {
-        this.waza_name = "HornAttack";
-        this._damage = 60;
-        this._coolTime = 5;
-    }
 }

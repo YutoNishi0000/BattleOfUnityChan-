@@ -7,89 +7,48 @@ using DG.Tweening;
 
 public class LastMonster : EnemyController, IMonsterDamageable
 {
-    //攻撃方法
-    public enum AttackState
-    {
-        Attack1,      //ノーマル
-        Attack2,
-        Attack3
-    }
-
-    public enum EnemyState
-    {
-        NOMAL_STATE,
-        ANGRY_STATE
-    }
-
     private Animator _anim;
     private Monster _monster;
-    public bool _endAttack;
-    public bool _endScream;
-    public bool _landing;     //地上にいるかどうか
-    public NavMeshAgent _navMeshAgent;
-    public bool _isMove;
-    private float _sec;
-    private int _Landing;
-    //public SABoneCollider[] _cols;
-    public EnemyState _enemyState;
-    [SerializeField] private int ENEMY_HP = 100;
-    [SerializeField] private int FLY_HEIGHT = 10;
-    private float GAME_TIME;
-    [SerializeField] private float TURN_STATE_TIME;
-    private bool _isDead;
-    private float MATERIAL_ALPHA = 1;
-    public Slider _HPBar;
-    public Slider _BulkHPBar;
-    public bool a;
-    private bool _startLand;                      //着陸開始
-    public bool _flyingMove;                      //空中移動を開始するかどうか
+    private NavMeshAgent _navMeshAgent;
+    private GameObject flyingPos;
     private BlendSkybox _skyBox;
-    [SerializeField] private Material _skyStateShader;
-    //[SerializeField] private Material _defaultShader;
-    private Vector3 _playerPos;
     private AudioSource _audioSource;
+    public AttackInfo _attackInfo;
+    private Vector3 _playerPos;
+    private EnemyState _enemyState;
+    private bool _endAttack;
+    private bool _endScream;
+    private bool _landing;     //地上にいるかどうか
+    private int _Landing;
+    private bool _isDead;
+    private bool _flyingMove;                      //空中移動を開始するかどうか
+    private bool _startLand;                      //着陸開始
+    private bool _onceScream;
+    private bool _attackLock;     //攻撃を制限するフラグ
+    private float GAME_TIME;
+    [SerializeField] private int ENEMY_HP = 100;
+    [SerializeField] private float TURN_STATE_TIME;
+    [SerializeField] private Slider _HPBar;
+    [SerializeField] private Slider _BulkHPBar;
+    [SerializeField] private Material _skyStateShader;
     [SerializeField] private AudioClip[] _audioClip;
     [SerializeField] private Material _nomalStateShader;
     [SerializeField] private Material _angryStateShader;
-    private bool _onceScream;
-    private bool _attackLock;     //攻撃を制限するフラグ
-    private GameObject flyingPos;
-
-    public struct AttackInfo
-    {
-        public AttackState _attackState;
-        public float _damage;
-
-        public AttackInfo(AttackState attackState, int damege)
-        {
-            _attackState = attackState;
-            _damage = damege;
-        }
-    }
-
-    public AttackInfo _attackInfo;
-
 
     // Start is called before the first frame update
     void Start()
     {
-        _startLand = false;
         _anim = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _skyBox = FindObjectOfType<BlendSkybox>();
         gameObject.GetComponentInChildren<SkinnedMeshRenderer>().material = _nomalStateShader;
         _audioSource = GetComponent<AudioSource>();
-
         _monster = new Monster();
-        //attackType = new AttackState();
-        ENEMY_HP = 1000;
 
-        //各種フラグ
+        _startLand = false;
         _endAttack = false;
         _endScream = false;
-        _isMove = true;
         _landing = true;
-        _sec = 0;
         GAME_TIME = 0;
         TURN_STATE_TIME = 15;
         _Landing = 1;
@@ -127,19 +86,8 @@ public class LastMonster : EnemyController, IMonsterDamageable
 
         AdjustMonsterPos();
 
-
-        ///ここでモンスターの向きの調整を行う！！！
-
-        //地上にいて、吠え終わっていたら
-        if (_landing && _endScream)
+        if(!_landing && _endScream)
         {
-            //プレイヤーの方向を向く
-            transform.DOLookAt(Instance.gameObject.transform.position, 0.1f);
-        }   
-        //そうじゃなかったら
-        else
-        {
-            //前を向く
             transform.rotation = Quaternion.identity;
         }
     }
@@ -151,12 +99,13 @@ public class LastMonster : EnemyController, IMonsterDamageable
         Attack();
     }
 
+    #region ステート管理
+
     //地上状態と飛行状態を管理するクラス
     void EnemyStateManager()
     {
         GAME_TIME += Time.deltaTime;
 
-        //ここInvokeで行けそうじゃね？？
         if (GAME_TIME >= TURN_STATE_TIME)
         {
             _Landing *= -1;
@@ -176,12 +125,10 @@ public class LastMonster : EnemyController, IMonsterDamageable
             GAME_TIME = 0;
         }
 
-        if(_startLand)
+        if (_startLand)
         {
             transform.DOMove(_playerPos, 2);
         }
-
-        Debug.Log("ランディングの値は" + _Landing);
 
         if (_landing)
         {
@@ -192,8 +139,6 @@ public class LastMonster : EnemyController, IMonsterDamageable
             Flying();
         }
     }
-
-    #region ステート管理
 
     void StateManager(float EnemyHP)
     {
@@ -238,17 +183,7 @@ public class LastMonster : EnemyController, IMonsterDamageable
         //ゲーム開始時吠え終わっていて
         if (_endScream)
         {
-            Debug.Log("走っています");
             _anim.SetFloat("Run", _navMeshAgent.velocity.magnitude);
-
-            if (_navMeshAgent.velocity.magnitude < 0.03f)
-            {
-                _isMove = false;
-            }
-            else
-            {
-                _isMove = true;
-            }
         }
     }
 
@@ -457,10 +392,6 @@ public class LastMonster : EnemyController, IMonsterDamageable
         _flyingMove = true;
     }
 
-    public void StartLand()
-    {
-    }
-
     //飛行が終わったときにアニメーションイベントとして呼び出す
     public void EndFlying()
     {
@@ -468,11 +399,6 @@ public class LastMonster : EnemyController, IMonsterDamageable
         _navMeshAgent.enabled = true;
         _startLand = false;
         _flyingMove = false;
-    }
-
-    public void OnParticleSystem()
-    {
-
     }
 
     #endregion

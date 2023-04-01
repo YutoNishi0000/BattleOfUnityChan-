@@ -8629,19 +8629,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e80bf77cf8d2947924754e6cad30f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _endAttack: 0
-  _endScream: 0
-  _navMeshAgent: {fileID: 0}
-  _isMove: 0
-  _moveLock: 0
-  _cols: []
   _HPBar: {fileID: 6060532407089783470}
   _BulkHPBar: {fileID: 4765669735932325320}
   _earthExplosion: {fileID: 198345217066185332, guid: 32c9fd11a72259d45aa26ae41c34c5aa,
     type: 3}
   _effectPos: {fileID: 351758831243432496}
   _audioClip:
-  - {fileID: 8300000, guid: 69c62e3e605c790448fad138c4c2281a, type: 3}
+  - {fileID: 8300000, guid: 56eb74f7fc0d625429407888f6a7be36, type: 3}
   - {fileID: 8300000, guid: d3ac0ac3edc2e89408b049e133731052, type: 3}
   _nomalStateShader: {fileID: 2100000, guid: 81d2b67dc7484724095d4343217c4e31, type: 2}
   _angryStateShader: {fileID: 2100000, guid: 8a2d1f9276d746a42925272a2372ca11, type: 2}

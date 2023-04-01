@@ -15,12 +15,6 @@ public class PlayerSEController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     //Œø‰Ê‰¹‚ğÄ¶‚·‚é
     public void Play(string seName)
     {

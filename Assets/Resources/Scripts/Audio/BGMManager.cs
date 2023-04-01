@@ -37,8 +37,10 @@ public class BGMManager : Actor
                     return;
                 }
 
+                _audioSource.Stop();
                 _audioSource.clip = _audioObjects[0];
                 _audioSource.Play();
+                _audioSource.loop = true;
                 _passCount++;
                 break;
             case 1:
@@ -47,8 +49,10 @@ public class BGMManager : Actor
                     return;
                 }
 
+                _audioSource.Stop();
                 _audioSource.clip = _audioObjects[1];
                 _audioSource.Play();
+                _audioSource.loop = true;
                 _passCount++;
                 break;
             case 2:
@@ -57,8 +61,10 @@ public class BGMManager : Actor
                     return;
                 }
 
+                _audioSource.Stop();
                 _audioSource.clip = _audioObjects[2];
                 _audioSource.Play();
+                _audioSource.loop = true;
                 _passCount++;
                 break;
             case 3:
@@ -67,8 +73,10 @@ public class BGMManager : Actor
                     return;
                 }
 
+                _audioSource.Stop();
                 _audioSource.clip = _audioObjects[3];
                 _audioSource.Play();
+                _audioSource.loop = true;
                 _passCount++;
                 break;
             case 4:

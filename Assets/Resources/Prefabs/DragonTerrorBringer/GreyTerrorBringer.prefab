@@ -12405,19 +12405,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93de1eb701f5231489fab54114c35f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _endAttack: 0
-  _endScream: 0
-  _landing: 0
-  _navMeshAgent: {fileID: 0}
-  _isMove: 0
-  _enemyState: 0
   ENEMY_HP: 1000
-  FLY_HEIGHT: 10
   TURN_STATE_TIME: 0
   _HPBar: {fileID: 341050383770085261}
   _BulkHPBar: {fileID: 1067787875428172192}
-  a: 0
-  _flyingMove: 0
   _skyStateShader: {fileID: 2100000, guid: 2cc3d51c3b46bec4a95b1cf2d2488afd, type: 2}
   _audioClip:
   - {fileID: 8300000, guid: 837999a9202e98a4b81b9eaf2153c46a, type: 3}

@@ -8,114 +8,82 @@ using UnityEngine.UI;
 
 public class CharacterControlScript : MonoBehaviour, IDamage
 {
-    private Camera mainCam;
+    #region Unityシステム変数
 
-    //移動処理に必要なコンポーネントを設定
-    public Animator animator;                 //モーションをコントロールするためAnimatorを取得
-    public CharacterController controller;    //キャラクター移動を管理するためCharacterControllerを取得
-    private PlayerAnimationEvents animEve;
     private PlayerSEController audioManager;
-
-    public Slider _bulkHPBar;
-    public Slider _HPBar;
-
-    //移動速度等のパラメータ用変数(inspectorビューで設定)
-    public float speed;         //キャラクターの移動速度
-    public float jumpSpeed;     //キャラクターのジャンプ力
-    public float rotateSpeed;   //キャラクターの方向転換速度
-    public float gravity;       //キャラにかかる重力の大きさ
-    public GameObject _avoidancePos;
-    private float _avoidSpeed = 10f;
-    Vector3 InitialPos;
-    Vector3 avoidDirection;
-    GameObject enemyObj;
-
-    Vector3 targetDirection;        //移動する方向のベクトル
-    Vector3 moveDirection = Vector3.zero;
-
-    //戦闘用変数＆状態フラグ管理
-    public GameObject Sword;                //自身が持っている剣
-    bool MoveLock = false;                  //移動ロックフラグ
-    bool AttackLock = false;                //連射防止用攻撃ロックフラグ
-    bool invincible = false;                //無敵フラグ
-    bool Deadflag = false;                  //死亡フラグ
-    bool Gardflag = false;
-    public bool _avoidance;/* = false*/                 //回避フラグ 
-    public bool _counterAttack;
-    public bool _counterCollider;
-    //bool _counterFlag;
-    bool _finishLock;
-    bool _gardflag;
-    bool _damageReaction;
-    // 画面を赤にするためのイメージ
-    public Image img;
+    private Rigidbody rb;
+    private GameObject enemyObj;
+    private Color damageColor = new Color(0.5f, 0f, 0f, 0.5f);
+    private Vector3 InitialPos;
+    private Vector3 avoidDirection;
+    private Vector3 targetDirection;        //移動する方向のベクトル
+    [SerializeField] private Animator animator;                 //モーションをコントロールするためAnimatorを取得
+    [SerializeField] private Slider _bulkHPBar;
+    [SerializeField] private Slider _HPBar;
+    [SerializeField] private GameObject Sword;                //自身が持っている剣
+    [SerializeField] private Image img;    // 画面を赤にするためのイメージ
     [SerializeField] private GameObject _swordMiracle;   //剣の軌跡エフェクト
 
+    #endregion
 
+    #region フラグ
 
-    //　IKで角度を有効にするかどうか
-    [SerializeField]
-    private bool useIKRot = true;
-    //　地面とするレイヤー
-    [SerializeField]
-    private LayerMask fieldLayer;
-    //　右足のウエイト
-    private float rightFootWeight = 0f;
-    //　左足のウエイト
-    private float leftFootWeight = 0f;
-    //　右足の位置
-    private Vector3 rightFootIKPosition;
-    //　左足の位置
-    private Vector3 leftFootIKPosition;
-    //　右足の角度
-    private Quaternion rightFootRot;
-    //　左足の角度
-    private Quaternion leftFootRot;
-    //　右足と左足の距離
-    private float distance;
-    //　足を付く位置のオフセット値
-    [SerializeField]
-    private Vector3 offset = new Vector3(0f, 0.06f, 0f);
-    //　コライダの中心位置
-    private Vector3 defaultCenter;
-    //　レイを飛ばす距離
-    [SerializeField]
-    private float rayRange = 1f;
+    public float speed;         //キャラクターの移動速度
+    public float rotateSpeed;   //キャラクターの方向転換速度
+    private bool MoveLock = false;                  //移動ロックフラグ
+    private bool AttackLock = false;                //連射防止用攻撃ロックフラグ
+    private bool Deadflag = false;                  //死亡フラグ
+    private bool Gardflag = false;
+    private bool _avoidance;                   //回避フラグ 
+    public bool _counterAttack;
+    public bool _counterCollider;
+    private bool _finishLock;
+    private bool _damageFlag = false;      //ダメージ処理の外部処理を行うかどうか
 
-    //　体の重心を調整する時のスピード
-    [SerializeField]
-    private float bodyPositionSpeed = 50f;
+    #endregion
 
-    //　レイを飛ばす位置の調整値
-    [SerializeField]
-    private Vector3 rayPositionOffset = Vector3.up * 0.3f;
+    #region IK関連の変数
 
-    //　体の重心を変更するかどうか
-    [SerializeField]
-    private bool isChangeBodyPosition = true;
-    //　前回の体の重心位置
-    private Vector3 preBodyPosition;
+    [SerializeField] private LayerMask fieldLayer;    //　地面とするレイヤー
+    private float rightFootWeight = 0f;    //　右足のウエイト
+    private float leftFootWeight = 0f;    //　左足のウエイト
+    private Vector3 rightFootIKPosition;    //　右足の位置
+    private Vector3 leftFootIKPosition;    //　左足の位置
+    private Quaternion rightFootRot;    //　右足の角度
+    private Quaternion leftFootRot;    //　左足の角度
+    private float distance;    //　右足と左足の距離
+    [SerializeField] private Vector3 offset = new Vector3(0f, 0.06f, 0f);    //　足を付く位置のオフセット値
+    [SerializeField] private float rayRange = 1f;    //　レイを飛ばす距離
+    [SerializeField] private float bodyPositionSpeed = 50f;    //　体の重心を調整する時のスピード
+    [SerializeField] private Vector3 rayPositionOffset = Vector3.up * 0.3f;    //　レイを飛ばす位置の調整値
+    private Vector3 preBodyPosition;    //　前回の体の重心位置
     //　足のレイが地面についているかどうか
     private bool rightFootGrounded;
     private bool leftFootGrounded;
 
+    #endregion
 
-    private float x;
-    private float z;
-    public float Speed = 1.0f;
-    float smooth = 10f;
-    private Rigidbody rb;
+    #region 数値
+
+    [SerializeField] private float currentHP;
+    [SerializeField] private float PlayerHP = 3000f;
+    [SerializeField] private float dashMagnification = 1.5f;      //ダッシュ時の速度
+    [SerializeField] private float unlockGardTime = 2f;           //何秒後にガード状態から強制的に解除させるか
+    [SerializeField] private float counterTime = 0.5f;            //カウンター判定時間
+    [SerializeField] private float shakeDur = 0.3f;               //UIシェイク時間
+    [SerializeField] private float shakeStrength = 100f;          //UIシェイクの強さ
+    [SerializeField] private float shakeVibrato = 10f;            //UIシェイクの振幅
+    [SerializeField] private float interpolation = 0.5f;          //Dotweenの補間値
+    [SerializeField] private float DamageTime = 0.8f;          //Dotweenの補間値
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
+        currentHP = PlayerHP;
         _counterAttack = false;
         _counterCollider = false;
-        //_counterFlag = false;
-        _finishLock = false;
-        _gardflag = false;
-        _damageReaction = false;
-
         Sword.GetComponent<Collider>().enabled = false;
         rb = GetComponent<Rigidbody>();
         audioManager = GetComponent<PlayerSEController>();
@@ -131,10 +99,13 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             return;
         }
 
+        GameClear();
+
+        //ガード処理は最優先で行う
         GardManager();
 
         //常にパネルのアルファ値を0にしておく
-        img.color = Color.Lerp(this.img.color, Color.clear, Time.deltaTime);
+        img.color = Color.Lerp(img.color, Color.clear, Time.deltaTime);
 
         //移動ロックONまたは死亡フラグONであれば移動、攻撃をさせない
         if (!MoveLock && !Deadflag && !Gardflag)
@@ -167,6 +138,9 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             return;
         }
 
+        //ジャンプ関数呼び出し
+        Jump();
+
         //進行方向計算
         //キーボード入力を取得
         float v = Input.GetAxisRaw("Vertical");         //InputManagerの↑↓の入力       
@@ -190,7 +164,14 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         {
             animator.SetFloat("Speed", 0); //キャラ走行のアニメーション終了
         }
+    }
 
+    void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            animator.SetTrigger("JUMP");
+        }
     }
 
     /// <summary>
@@ -217,7 +198,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if(Input.GetKey(KeyCode.LeftShift))
         {
             //普段のスピードの1.5倍のスピードの値を返す
-            return speed * 1.5f;
+            return speed * dashMagnification;
         }
         else
         {
@@ -230,7 +211,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     #region ガード処理
 
-    //
+    //ガード処理関数
     void GardManager()
     {
         if (Input.GetKeyDown(KeyCode.Q) && !Gardflag)
@@ -240,7 +221,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             audioManager.Play("Gard");
 
             //0.5秒後にカウンターフラグがオフに
-            Invoke(nameof(EndCounterAttack), 3f);
+            Invoke(nameof(EndCounterAttack), counterTime);
             Debug.Log("カウンター攻撃のための判定開始");
         }
         else if (Input.GetKeyUp(KeyCode.Q) && Gardflag)
@@ -261,7 +242,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         animator.SetFloat("Gard", 1);
 
         //ガード終わり
-        Invoke(nameof(UnLockGard), 2);
+        Invoke(nameof(UnLockGard), unlockGardTime);
     }
 
     void UnLockGard()
@@ -281,7 +262,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     {
         avoidDirection = transform.forward;
         audioManager.Play("Avoidance");
-        StartCoroutine(CAvoidance(0.5f));
+        StartCoroutine(CAvoidance(interpolation));
     }
 
     IEnumerator CAvoidance(float time)
@@ -335,11 +316,19 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     /// </summary>
     public void OnAnimatorIK(int layerIndex)
     {
+        //回避時はIK処理を行わない
         if(_avoidance)
         {
             return;
         }
 
+        FaceIKController();
+
+        RegsIKController();
+    }
+
+    void RegsIKController()
+    {
         //　アニメーションパラメータからIKのウエイトを取得
         rightFootWeight = animator.GetFloat("RightFootWeight");
         leftFootWeight = animator.GetFloat("LeftFootWeight");
@@ -359,12 +348,9 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             //　右足IKの設定
             animator.SetIKPositionWeight(AvatarIKGoal.RightFoot, rightFootWeight);
             animator.SetIKPosition(AvatarIKGoal.RightFoot, rightFootIKPosition + offset);
-            if (useIKRot)
-            {
-                rightFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-                animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, rightFootWeight);
-                animator.SetIKRotation(AvatarIKGoal.RightFoot, rightFootRot);
-            }
+            rightFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, rightFootWeight);
+            animator.SetIKRotation(AvatarIKGoal.RightFoot, rightFootRot);
         }
         else
         {
@@ -384,20 +370,16 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             //　左足IKの設定
             animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, leftFootWeight);
             animator.SetIKPosition(AvatarIKGoal.LeftFoot, leftFootIKPosition + offset);
-
-            if (useIKRot)
-            {
-                leftFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, leftFootWeight);
-                animator.SetIKRotation(AvatarIKGoal.LeftFoot, leftFootRot);
-            }
+            leftFootRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, leftFootWeight);
+            animator.SetIKRotation(AvatarIKGoal.LeftFoot, leftFootRot);
         }
         else
         {
             leftFootGrounded = false;
         }
         //　体の重心を動かす場合
-        if (isChangeBodyPosition && rightFootGrounded && leftFootGrounded)
+        if (rightFootGrounded && leftFootGrounded)
         {
             //　左右の足とキャラクターの足元の位置との距離を計算
             var rightFootDistance = rightFootIKPosition.y - transform.position.y;
@@ -406,24 +388,20 @@ public class CharacterControlScript : MonoBehaviour, IDamage
             var distance = rightFootDistance < leftFootDistance ? rightFootDistance : leftFootDistance;
             //　体の重心を下にある方の足に合わせて下げる
             var nowBodyPosition = animator.bodyPosition + Vector3.up * distance;
-            //　徐々に変更するようにしているが、たぶんコメントにしてある処理のように一気に変えても問題ない
+            //　徐々に変更するようにしている
             animator.bodyPosition = Vector3.Lerp(preBodyPosition, nowBodyPosition, bodyPositionSpeed * Time.deltaTime);
             preBodyPosition = animator.bodyPosition;
-            //animator.bodyPosition = nowBodyPosition;
-
         }
+    }
 
-
-
-        //=====================================================================================================================
-        // ここからは顔のIKを変更する処理に移る
-        //=====================================================================================================================
+    void FaceIKController()
+    {
         Vector3 target_pos = new Vector3(enemyObj.transform.position.x, 0, enemyObj.transform.position.z);
         Vector3 char_pos = new Vector3(transform.position.x, 0, transform.position.z);
         Vector3 direction = target_pos - char_pos;
 
         //水平方向でモンスター方向のベクトルと、自分が動いている方向のベクトルとの角度を取得
-        float angle = Vector3.Angle(direction, moveDirection);
+        float angle = Vector3.Angle(direction, targetDirection);
 
         //↑で求めた角度が150度以上であれば
         if (angle >= 150)
@@ -442,7 +420,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     void OnTriggerEnter(Collider col)
     {
-        if (Deadflag || invincible) //死亡時または無敵時、回避時、ガード時は処理しない
+        if (Deadflag) //死亡時または無敵時、回避時、ガード時は処理しない
         {
             return;
         }
@@ -459,9 +437,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
         else
         {
-            ////ダメージを与える
-            //LocalVariables.currentHP -= 10;
-
             //敵からの攻撃を受けたとき
             if (col.CompareTag("AttackCollider"))
             {
@@ -471,44 +446,33 @@ public class CharacterControlScript : MonoBehaviour, IDamage
                     //ガードカウンターを実行
                     animator.SetTrigger("CounterAttack");
                     audioManager.Play("Counter");
-
-                    //ガードカウンター用の攻撃力などがあるためそのフラグをオンに
-                    //_counterFlag = true;
+                    _counterCollider = true;
                     return;
                 }
             }
         }
     }
 
-    //被弾処理同期用RPC
-    void Damaged()
+    //被弾外部処理
+    void GetDamage()
     {
-        if (Gardflag)
+        if (Gardflag || _damageFlag)
         {
             return;
         }
 
         MoveLock = true;    //硬直のため移動ロックON
-
-        if (_damageReaction)
-        {
-            animator.SetTrigger("DamagedTrigger");  //ダメージアニメーション
-            DamageSE();
-        }
-    }
-
-    IEnumerator DamageReaction(float time)
-    {
-        _damageReaction = false;
-        yield return new WaitForSeconds(time);
-        _damageReaction = true;
+        animator.SetTrigger("DamagedTrigger");  //ダメージアニメーション
+        DamageSE();
     }
 
     //ヒット時硬直処理
-    IEnumerator _rigor(float pausetime)
+    IEnumerator Rigor(float pausetime)
     {
+        _damageFlag = true;
         yield return new WaitForSeconds(pausetime); //倒れている時間
         MoveLock = false;   //移動ロック解除
+        _damageFlag = false;
     }
 
     public void Damage(float damage)
@@ -520,38 +484,36 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         }
 
         //画面を赤塗りにする
-        img.color = new Color(0.5f, 0f, 0f, 0.5f);
-        LocalVariables.currentHP -= damage;
-        _bulkHPBar.value = LocalVariables.currentHP;
-        _HPBar.DOValue(LocalVariables.currentHP, 0.5f);
+        img.color = damageColor;
+        currentHP -= damage;
+        _bulkHPBar.value = currentHP;
+        _HPBar.DOValue(currentHP, interpolation);
 
-        if (LocalVariables.currentHP <= 0)
+        if (currentHP <= 0)
         {
             Dead();
         }
         else
         {
             //ガード時HPは減るけど、被弾モーションはしない
-            Damaged();
-            StartCoroutine(DamageReaction(1));
-            StartCoroutine(_rigor(.5f));    //被弾硬直処理
+            GetDamage();
+            StartCoroutine(Rigor(DamageTime));    //被弾硬直処理
         }
     }
 
     //死亡処理同期用RPC
     void Dead()
     {
-        AttackLock = true;  //攻撃ロックON
-        MoveLock = true;    //移動ロックON
         Deadflag = true;
-        animator.SetTrigger("DeathTrigger");    //死亡アニメーションON
+        _finishLock = true;  //ゲーム終了フラグオン
+        animator.Play("DAMAGED01");    //死亡アニメーションON
         audioManager.Play("GAMEOVER");
         GameSystem.Instance.SetGameState(GameSystem.GameState.GameOver);
     }
 
     public void ShakeUI()
     {
-        GetComponent<PerlinNoiseController>().StartShake(0.3f, 100, 10);
+        GetComponent<PerlinNoiseController>().StartShake(shakeDur, shakeStrength, shakeVibrato);
     }
 
     #endregion
@@ -561,11 +523,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
     //攻撃アニメーション開始時に呼び出す
     public void StartAttack()
     {
-        if(_counterAttack/*_counterFlag*/)
-        {
-            _counterCollider = true;
-        }
-
         //剣の当たり判定をオンに
         Sword.GetComponent<Collider>().enabled = true;
 
@@ -579,7 +536,6 @@ public class CharacterControlScript : MonoBehaviour, IDamage
         if(_counterCollider)
         {
             _counterCollider = false;
-            //_counterFlag = false;
         }
 
         //剣の当たり判定をオフに
@@ -616,9 +572,10 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     public void GameClear()
     {
-        if(GameSystem.DeathMonsterNum == 4)
+        if(GameSystem.Instance.GetGameState() == GameSystem.GameState.GameClear)
         {
-            animator.SetTrigger("GAMECLEAR");
+            animator.Play("WIN00");
+            audioManager.Play("GAMECLEAR");
             GameSystem.Instance.SetGameState(GameSystem.GameState.GameClear);
             _finishLock = true;
         }
@@ -626,7 +583,7 @@ public class CharacterControlScript : MonoBehaviour, IDamage
 
     public void GameOver()
     {
-        if(LocalVariables.currentHP <= 0)
+        if(currentHP <= 0)
         {
             animator.SetTrigger("GAMEOVER");
             _finishLock = true;

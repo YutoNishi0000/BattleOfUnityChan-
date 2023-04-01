@@ -7,61 +7,30 @@ using DG.Tweening;
 
 public class SecondMonster : EnemyController, IMonsterDamageable
 {
-    //攻撃方法
-    public enum AttackState
-    {
-        Attack1,      //ノーマル
-        Attack2,
-        Attack3
-    }
-
-    public enum EnemyState
-    {
-        NOMAL_STATE,
-        ANGRY_STATE
-    }
-
     private Animator _anim;
     private Monster _monster;
-    public bool _endAttack;
-    public bool _endScream;
+    private NavMeshAgent _navMeshAgent;
+    private AudioSource _audioSource;
+    private EnemyState _enemyState;
+    public AttackInfo _attackInfo;
+    private bool _endAttack;
+    private bool _endScream;
     private bool _landing;     //地上にいるかどうか
-    public NavMeshAgent _navMeshAgent;
-    public bool _isMove;
-    private float _sec;
+    private bool _isDead;
+    private bool _onceScream;
+    private bool _attackLock;     //攻撃を制限するフラグ
     private int _Landing;
-    //public SABoneCollider[] _cols;
-    public EnemyState _enemyState;
+    private float _sec;
+    private float GAME_TIME;
+    private float MATERIAL_ALPHA = 1;
     [SerializeField] private int ENEMY_HP = 100;
     [SerializeField] private int FLY_HEIGHT = 10;
-    private float GAME_TIME;
     [SerializeField] private float TURN_STATE_TIME;
-    private bool _isDead;
-    private float MATERIAL_ALPHA = 1;
-    public Slider _HPBar;
-    public Slider _BulkHPBar;
-    private AudioSource _audioSource;
+    [SerializeField] private Slider _HPBar;
+    [SerializeField] private Slider _BulkHPBar;
     [SerializeField] private AudioClip[] _audioClip;
     [SerializeField] private Material _nomalStateShader;
     [SerializeField] private Material _angryStateShader;
-    //public AttackState attackType;
-    private bool _onceScream;
-    private bool _attackLock;     //攻撃を制限するフラグ
-
-
-    public struct AttackInfo
-    {
-        public AttackState _attackState;
-        public float _damage;
-
-        public AttackInfo(AttackState attackState, int damege)
-        {
-            _attackState = attackState;
-            _damage = damege;
-        }
-    }
-
-    public AttackInfo _attackInfo;
 
 
     // Start is called before the first frame update
@@ -72,13 +41,10 @@ public class SecondMonster : EnemyController, IMonsterDamageable
         _audioSource = GetComponent<AudioSource>();
 
         _monster = new Monster();
-        //attackType = new AttackState();
-        ENEMY_HP = 1000;
 
         //各種フラグ
         _endAttack = false;
         _endScream = false;
-        _isMove = true;
         _landing = true;
         _sec = 0;
         GAME_TIME = 0;
@@ -203,15 +169,6 @@ public class SecondMonster : EnemyController, IMonsterDamageable
         {
             Debug.Log("走っています");
             _anim.SetFloat("Run", _navMeshAgent.velocity.magnitude);
-
-            if (_navMeshAgent.velocity.magnitude < 0.03f)
-            {
-                _isMove = false;
-            }
-            else
-            {
-                _isMove = true;
-            }
         }
     }
 
@@ -369,7 +326,7 @@ public class SecondMonster : EnemyController, IMonsterDamageable
             return;
         }
 
-        gameSystem.GenerateMonster(GameSystem.DeathMonsterNum);
+        MonsterGenerater.generater.GenerateMonster(GameSystem.DeathMonsterNum);
         //Destroy(gameObject);
         gameObject.SetActive(false);
     }

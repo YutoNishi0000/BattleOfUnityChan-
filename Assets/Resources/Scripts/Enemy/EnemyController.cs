@@ -5,6 +5,32 @@ using UnityEngine;
 //モンスターの基底クラス
 public class EnemyController : Actor
 {
+    //攻撃方法
+    public enum AttackState
+    {
+        Attack1,      //ノーマル
+        Attack2,
+        Attack3
+    }
+
+    public enum EnemyState
+    {
+        NOMAL_STATE,
+        ANGRY_STATE
+    }
+
+    public struct AttackInfo
+    {
+        public AttackState _attackState;
+        public float _damage;
+
+        public AttackInfo(AttackState attackState, int damege)
+        {
+            _attackState = attackState;
+            _damage = damege;
+        }
+    }
+
     public virtual void Move() { }
 
     public virtual void Attack() { }

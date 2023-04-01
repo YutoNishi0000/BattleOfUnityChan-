@@ -26,8 +26,6 @@ public class GameSystem : MonoBehaviour
 
     #endregion
 
-    public GameObject[] _monsters;
-
     public static int DeathMonsterNum;    //倒したモンスターの数
 
     public bool _instantiateLock;    //モンスターの生成をロックするためのフラグ
@@ -47,26 +45,20 @@ public class GameSystem : MonoBehaviour
         _state = new GameState();
 
         DeathMonsterNum = 0;
-        GenerateMonster(DeathMonsterNum);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
-    }
-
-    void JudgeGameClear()
-    {
-        if(DeathMonsterNum >= 4)
+        if(Input.GetKeyDown(KeyCode.Escape))
         {
-
+            Application.Quit();
         }
     }
 
-    public void GenerateMonster(int number)
+    public void Initialization()
     {
-        Instantiate(_monsters[number], transform.position, Quaternion.identity);
+        DeathMonsterNum = 0;
+        _state = new GameState();
     }
 
     public void SetGameState(GameState state)

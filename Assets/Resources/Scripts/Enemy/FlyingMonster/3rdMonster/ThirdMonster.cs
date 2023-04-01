@@ -8,65 +8,33 @@ using UnityEngine.UI;
 
 public class ThirdMonster : EnemyController, IMonsterDamageable
 {
-    //攻撃方法
-    public enum AttackState
-    {
-        Attack1,      //ノーマル
-        Attack2,
-        Attack3
-    }
-
-    public enum EnemyState
-    {
-        NOMAL_STATE,
-        ANGRY_STATE
-    }
-
     private Animator _anim;
     private Monster _monster;
-    public bool _endAttack;
-    public bool _endScream;
-    private bool _landing;     //地上にいるかどうか
     public NavMeshAgent _navMeshAgent;
-    public bool _isMove;
-    private float _sec;
-    private int _Landing;
-    //public SABoneCollider[] _cols;
-    public EnemyState _enemyState;
-    [SerializeField] private int ENEMY_HP = 100;
-    [SerializeField] private int FLY_HEIGHT = 10;
-    private float GAME_TIME;
-    [SerializeField] private float TURN_STATE_TIME;
-    private bool _isDead;
-    private float MATERIAL_ALPHA = 1;
-    public Slider _HPBar;
-    public Slider _BulkHPBar;
-    private AudioSource _audioSource;
-    [SerializeField] private AudioClip[] _audioClip;
-    [SerializeField] private Material _nomalStateShader;
-    [SerializeField] private Material _angryStateShader;
-    //public AttackState attackType;
-    private bool _onceScream;
-    private bool _attackLock;     //攻撃を制限するフラグ
-    private bool _rollingAttack;   //回転攻撃のフラグ
-    [SerializeField] private Material _ground;   //フィールドのマテリアル
     private GameObject _fireOutRegion;            //炎をフィールドに表示させる
     private GameObject _fireInRegion;            //炎をフィールドに表示させる
     private GameObject _effectPos;            //炎をフィールドに表示させる
-
-    public struct AttackInfo
-    {
-        public AttackState _attackState;
-        public float _damage;
-
-        public AttackInfo(AttackState attackState,int damege)
-        {
-            _attackState = attackState;
-            _damage = damege;
-        }
-    }
-
+    private AudioSource _audioSource;
     public AttackInfo _attackInfo;
+    public EnemyState _enemyState;
+    private bool _endAttack;
+    private bool _endScream;
+    private int _Landing;
+    private bool _landing;     //地上にいるかどうか
+    private float GAME_TIME;
+    private bool _isDead;
+    private bool _onceScream;
+    private bool _attackLock;     //攻撃を制限するフラグ
+    private bool _rollingAttack;   //回転攻撃のフラグ
+    [SerializeField] private int ENEMY_HP = 100;
+    [SerializeField] private int FLY_HEIGHT = 10;
+    [SerializeField] private float TURN_STATE_TIME;
+    [SerializeField] private Slider _HPBar;
+    [SerializeField] private Slider _BulkHPBar;
+    [SerializeField] private AudioClip[] _audioClip;
+    [SerializeField] private Material _nomalStateShader;
+    [SerializeField] private Material _angryStateShader;
+    [SerializeField] private Material _ground;   //フィールドのマテリアル
 
 
     // Start is called before the first frame update
@@ -75,17 +43,12 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
         _anim = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _audioSource = GetComponent<AudioSource>();
-
         _monster = new Monster();
-        //attackType = new AttackState();
-        ENEMY_HP = 1000;
 
         //各種フラグ
         _endAttack = false;
         _endScream = false;
-        _isMove = true;
         _landing = true;
-        _sec = 0;
         GAME_TIME = 0;
         TURN_STATE_TIME = 15;
         _Landing = 1;
@@ -133,16 +96,6 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
         //AdjustMonsterPos();
 
         EnemyStateManager();
-
-
-        if(_landing)
-        {
-            Debug.Log("地上");
-        }
-        else
-        {
-            Debug.Log("空中");
-        }
     }
 
     //地面についているときの処理
@@ -243,17 +196,7 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
         //ゲーム開始時吠え終わっていて
         if (_endScream)
         {
-            Debug.Log("走っています");
             _anim.SetFloat("Run", _navMeshAgent.velocity.magnitude);
-
-            if(_navMeshAgent.velocity.magnitude < 0.01f)
-            {
-                _isMove = false;
-            }
-            else
-            {
-                _isMove = true;
-            }
         }
     }
 
@@ -415,7 +358,7 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
             return;
         }
 
-        gameSystem.GenerateMonster(GameSystem.DeathMonsterNum);
+        MonsterGenerater.generater.GenerateMonster(GameSystem.DeathMonsterNum);
         //Destroy(gameObject);
         gameObject.SetActive(false);
     }
@@ -488,47 +431,4 @@ public class ThirdMonster : EnemyController, IMonsterDamageable
     }
 
     #endregion
-}
-
-//============================================================================================================
-// 技の種類
-//============================================================================================================
-
-/// <summary>
-/// 技名：ノーマルアタック ダメージ：60 クールタイム：6秒
-/// </summary>
-class FireBall : Waza
-{
-    public FireBall()
-    {
-        this.waza_name = "FireBall";
-        this._damage = 60;
-        this._coolTime = 6;
-    }
-}
-
-/// <summary>
-/// 技名：ノーマルアタック ダメージ：60 クールタイム：7秒
-/// </summary>
-class FlyingFireBall : Waza
-{
-    public FlyingFireBall()
-    {
-        this.waza_name = "FlyingFireBall";
-        this._damage = 70;
-        this._coolTime = 6;
-    }
-}
-
-/// <summary>
-/// 技名：テイルアタック ダメージ：30 クールタイム：4秒
-/// </summary>
-class TailAttack : Waza
-{
-    public TailAttack()
-    {
-        this.waza_name = "TailAttack";
-        this._damage = 30;
-        this._coolTime = 4;
-    }
 }

@@ -5116,12 +5116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 983f058718bb55548b5ecfebb7e30b24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _endAttack: 0
-  _endScream: 0
-  _navMeshAgent: {fileID: 0}
-  _isMove: 0
-  _enemyState: 0
-  ENEMY_HP: 100
+  ENEMY_HP: 1000
   FLY_HEIGHT: 10
   TURN_STATE_TIME: 0
   _HPBar: {fileID: 5818253258166247773}
